@@ -1,8 +1,8 @@
-# Claude Mythos Preview System Card — Analysis & Evidence Base
+# Mythos System Card — Analysis & Evidence Base
 
-> This document summarizes the publicly documented reasoning patterns from the [Claude Mythos Preview System Card](https://www.anthropic.com/research/mythos) (Anthropic, 2026) that form the evidence base for this framework's behavioral priming approach.
+> This document summarizes the publicly documented reasoning patterns from the Mythos System Card (publicly published research, 2026) that form the evidence base for this framework's behavioral priming approach.
 >
-> **Honest framing:** This is a summary of Anthropic's published research for educational and reference purposes. It is not affiliated with or endorsed by Anthropic. The original system card is the authoritative source.
+> **Honest framing:** This is a summary of publicly published research for educational and reference purposes. It is not affiliated with or endorsed in published research. The original system card is the authoritative source.
 
 ## 1. The Central Finding: Single-Forward-Pass Reasoning
 
@@ -142,11 +142,11 @@ This is the crucial honest distinction:
 
 ## Primary Source
 
-**[Claude Mythos Preview System Card](https://www.anthropic.com/research/mythos)** — Anthropic, published 2026. The authoritative source for all claims in this document. Read it in full for the complete picture.
+**Mythos System Card (publicly published research, 2026)** — published 2026. The authoritative source for all claims in this document. Read it in full for the complete picture.
 
 ## How This Informs the Framework
 
-Every principle in [`mythos-claude-modus/SKILL.md`](../mythos-claude-modus/SKILL.md) traces back to a finding in the system card:
+Every principle in [`fable-mythos-modus/SKILL.md`](../fable-mythos-modus/SKILL.md) traces back to a finding in the system card:
 
 | System Card finding | Framework principle |
 |---|---|

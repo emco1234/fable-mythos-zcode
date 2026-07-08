@@ -65,4 +65,4 @@ This framework encodes that lesson structurally. Every agent prompt, every MAP p
 
 📖 **Related:**
 - [`docs/MYTHOS-SYSTEM-CARD-ANALYSIS.md`](./MYTHOS-SYSTEM-CARD-ANALYSIS.md) — the evidence base
-- [`mythos-claude-modus/SKILL.md`](../mythos-claude-modus/SKILL.md) — Principle 4 in full
+- [`fable-mythos-modus/SKILL.md`](../fable-mythos-modus/SKILL.md) — Principle 4 in full

@@ -15,7 +15,7 @@ The biggest open question: **does 3× parallel thinking measurably outperform 1�
 
 The reasoning patterns transfer across models, but framing may need tuning. If you adapt this framework for:
 
-- **Claude (Opus/Sonnet)** — the original substrate Mythos was trained on
+- ** (Opus/Sonnet)** — the original frontier-model substrate
 - **GPT-5 / GPT-4** — different priming idioms
 - **Gemini 3** — different context handling
 - **Local models** (Llama, Mistral, etc.)

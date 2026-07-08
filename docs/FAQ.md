@@ -4,13 +4,13 @@
 
 ### Is this a jailbreak?
 
-**No.** This is a behavioral priming framework. It does not bypass model safety measures, does not unlock hidden capabilities, and does not swap models. It applies documented reasoning patterns (from Anthropic's published Mythos System Card) to GLM-5.2, the model ZCode already uses.
+**No.** This is a behavioral priming framework. It does not bypass model safety measures, does not unlock hidden capabilities, and does not swap models. It applies documented reasoning patterns (from published research's published Mythos System Card) to GLM-5.2, the model ZCode already uses.
 
-### Is this affiliated with Anthropic or ZAI?
+### Is this affiliated with any specific AI lab?
 
-**No.** This is an independent project. "Mythos" and "Claude" are referenced as the research inspiration. GLM-5.2 and ZCode are products of ZAI. This framework is a third-party integration that uses publicly documented research to improve reasoning quality.
+**No.** This is an independent project. "Mythos" is referenced as a reasoning-pattern label (not a product claim). GLM-5.2 and ZCode are products of ZAI. This framework is a third-party integration that uses publicly documented research to improve reasoning quality.
 
-### Will this make my ZCode identical to Claude Mythos?
+### Will this make my ZCode identical to Mythos?
 
 **No, and we don't claim it will.** The observable behavioral patterns transfer well. The latent internal processes (SAE features, evaluation-awareness vectors — see System Card §4.5) are architecture-specific to Mythos' weights and do not transfer. Net result: meaningfully better reasoning, not Mythos parity.
 
@@ -28,18 +28,18 @@ If all three are correct and MAP still doesn't fire, the task may be classified 
 
 ### The skill doesn't appear after restart
 
-Check the frontmatter of `~/.zcode/skills/mythos-claude-modus/SKILL.md`:
+Check the frontmatter of `~/.zcode/skills/fable-mythos-modus/SKILL.md`:
 
 ```yaml
 ---
-name: mythos-claude-modus
+name: fable-mythos-modus
 description: ...
 ---
 ```
 
 - First line must be exactly `---`
-- `name` must match the folder name (`mythos-claude-modus`)
-- Folder must be at `~/.zcode/skills/mythos-claude-modus/`
+- `name` must match the folder name (`fable-mythos-modus`)
+- Folder must be at `~/.zcode/skills/fable-mythos-modus/`
 
 ### Can I use this without sub-agents (just the skill)?
 
@@ -85,9 +85,9 @@ The original framework was developed for a German-speaking user. The structural 
 
 ## Compatibility
 
-### Does this work with Claude Code?
+### Does this work with other agent frameworks?
 
-**Yes.** The skill is mirrored to `~/.agents/skills/mythos-claude-modus/` for Claude Code compatibility. The sub-agent templates are plain Markdown and work with any agent framework supporting custom sub-agents.
+**Yes.** The skill is mirrored to `~/.agents/skills/fable-mythos-modus/` for agent-framework compatibility. The sub-agent templates are plain Markdown and work with any agent framework supporting custom sub-agents.
 
 ### Does this work with other models (GPT, Gemini, Llama)?
 

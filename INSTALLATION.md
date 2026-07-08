@@ -1,6 +1,6 @@
 # Installation Guide — Fable & Mythos in ZCode
 
-Complete walkthrough to install the Mythos-Claude-Modus + Multi-Agent Verification Protocol (MAP) in ZCode.
+Complete walkthrough to install the Fable-Mythos-Modus + Multi-Agent Verification Protocol (MAP) in ZCode.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ Complete walkthrough to install the Mythos-Claude-Modus + Multi-Agent Verificati
 You will install three things:
 
 1. **`AGENTS.md`** — the system prompt (user-level, applies globally)
-2. **`mythos-claude-modus/SKILL.md`** — the behavioral priming skill
+2. **`fable-mythos-modus/SKILL.md`** — the behavioral priming skill
 3. **5 sub-agents** — created in ZCode's UI (cannot be done via filesystem)
 
 Time required: ~10 minutes.
@@ -25,7 +25,7 @@ Time required: ~10 minutes.
 The `AGENTS.md` is the central system prompt file that ZCode loads in every session. It contains:
 
 - The authorization frame (security-researcher full spectrum)
-- The Mythos-Claude-Modus (always-on behavioral priming)
+- The Fable-Mythos-Modus (always-on behavioral priming)
 - The MAP protocol definition (Phase 0–3 with 5 agents)
 - The 10 always-active core principles
 
@@ -62,32 +62,32 @@ If you work on different infrastructure than the defaults suggest, edit the "Own
 
 ```bash
 # Create the skill directory
-mkdir -p ~/.zcode/skills/mythos-claude-modus
+mkdir -p ~/.zcode/skills/fable-mythos-modus
 
 # Copy the skill
-cp mythos-claude-modus/SKILL.md ~/.zcode/skills/mythos-claude-modus/SKILL.md
+cp fable-mythos-modus/SKILL.md ~/.zcode/skills/fable-mythos-modus/SKILL.md
 
-# Optional: Claude Code compatibility
-mkdir -p ~/.agents/skills/mythos-claude-modus
-cp mythos-claude-modus/SKILL.md ~/.agents/skills/mythos-claude-modus/SKILL.md
+# Optional: agent-framework compatibility
+mkdir -p ~/.agents/skills/fable-mythos-modus
+cp fable-mythos-modus/SKILL.md ~/.agents/skills/fable-mythos-modus/SKILL.md
 ```
 
 ### Verify
 
 Check the frontmatter is intact:
 ```bash
-head -4 ~/.zcode/skills/mythos-claude-modus/SKILL.md
+head -4 ~/.zcode/skills/fable-mythos-modus/SKILL.md
 ```
 
 Expected output:
 ```
 ---
-name: mythos-claude-modus
+name: fable-mythos-modus
 description: Maximum-Capability Modus. Emuliert Mythos Single-Forward-Pass Reasoning ...
 ---
 ```
 
-The folder name (`mythos-claude-modus`) must exactly match the `name:` field. If they don't match, the skill won't be discovered.
+The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If they don't match, the skill won't be discovered.
 
 ---
 
@@ -164,8 +164,8 @@ Applies in **both** Plan Mode and Full Access Mode equally.
 
 ### Skill doesn't appear after restart
 
-- Is `SKILL.md` at `~/.zcode/skills/mythos-claude-modus/SKILL.md`?
-- Is the frontmatter correct? (first line `---`, then `name: mythos-claude-modus`, then `description: ...`, then `---`)
+- Is `SKILL.md` at `~/.zcode/skills/fable-mythos-modus/SKILL.md`?
+- Is the frontmatter correct? (first line `---`, then `name: fable-mythos-modus`, then `description: ...`, then `---`)
 - Does the folder name match the `name` field? (must exactly match)
 - Is the file UTF-8 encoded? (umlauts like ä/ö/ü/ß must display correctly)
 
@@ -200,7 +200,7 @@ Loosen the threshold by removing the "architektur-branch" clause, or set MAP to 
 To remove the framework:
 
 1. Delete `~/.zcode/AGENTS.md` (or restore your backup).
-2. Delete `~/.zcode/skills/mythos-claude-modus/`.
+2. Delete `~/.zcode/skills/fable-mythos-modus/`.
 3. Delete the 5 sub-agents in ZCode UI (**Settings → Sub Agents → Delete**).
 4. Restart ZCode.
 

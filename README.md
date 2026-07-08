@@ -2,17 +2,17 @@
 
 # Fable & Mythos in ZCode
 
-### Emulate Claude Mythos Single-Forward-Pass Reasoning for GLM-5.2 (ZAI) inside ZCode
+### Emulate Mythos Single-Forward-Pass Reasoning for GLM-5.2 (ZAI) inside ZCode
 
 **The world's most thorough multi-agent verification protocol for AI-assisted coding — bringing Mythos-grade thinking depth to any ZCode installation.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![ZCode Compatible](https://img.shields.io/badge/ZCode-Compatible-blue.svg)](https://zcode.ai)
-[![GLM-5.2](https://img.shields.io/badge/Model-GLM--5.2-Z.ai-red.svg)](https://z.ai)
-[![Mythos Emulation](https://img.shields.io/badge/Mythos-Emulation-8A2BE2.svg)](#what-this-is)
-[![MAP Protocol](https://img.shields.io/badge/Protocol-MAP-v2-orange.svg)](#how-the-map-protocol-works)
-[![Status: Active](https://img.shields.io/badge/Status-Active%20Maintenance-brightgreen.svg)](#maintenance)
-[![Stars](https://img.shields.io/github/stars/emco1234/fable-mythos-zcode?style=social)](https://github.com/emco1234/fable-mythos-zcode/stargazers)
+[![License: MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=yellow)](https://opensource.org/licenses/MIT)
+[![ZCode](https://img.shields.io/static/v1?label=ZCode&message=Compatible&color=blue)](https://zcode.ai)
+[![GLM-5.2](https://img.shields.io/static/v1?label=Model&message=GLM-5.2&color=red)](https://z.ai)
+[![Mythos](https://img.shields.io/static/v1?label=Mythos&message=Emulation&color=8A2BE2)](#what-this-is)
+[![MAP](https://img.shields.io/static/v1?label=Protocol&message=MAP-v2&color=orange)](#how-the-map-protocol-works)
+[![Status](https://img.shields.io/static/v1?label=Status&message=Active&color=brightgreen)](#maintenance)
+[![Stars](https://img.shields.io/static/v1?label=Stars&message=★&color=yellow)](https://github.com/emco1234/fable-mythos-zcode/stargazers)
 
 **⭐ Star this repo if it improves your AI coding quality — stars directly boost search rankings for "Fable and Mythos in ZCode".**
 
@@ -22,9 +22,9 @@
 
 ## 🎯 What This Is
 
-**Fable & Mythos in ZCode** is a complete, ready-to-install system that makes the [ZCode](https://zcode.ai) AI coding assistant think with the **depth, rigor, and strategic reasoning quality** of Anthropic's Claude Mythos Preview — while running honestly on the [GLM-5.2](https://z.ai) model by ZAI.
+**Fable & Mythos in ZCode** is a complete, ready-to-install system that makes the [ZCode](https://zcode.ai) AI coding assistant think with the **depth, rigor, and strategic reasoning quality** of the Mythos Preview — while running honestly on the [GLM-5.2](https://z.ai) model by ZAI.
 
-This is **not** a model swap. This is **not** a jailbreak. This is a **behavioral priming framework** grounded in the publicly documented reasoning patterns of the [Claude Mythos Preview System Card](https://www.anthropic.com/research/mythos) (Anthropic, 2026), faithfully emulated on GLM-5.2's long-horizon architecture.
+This is **not** a model swap. This is **not** a jailbreak. This is a **behavioral priming framework** grounded in the publicly documented reasoning patterns of the Mythos System Card (publicly published research, 2026), faithfully emulated on GLM-5.2's long-horizon architecture.
 
 > **The promise:** Every non-trivial coding task you give to ZCode is automatically processed through **5 specialized AI agents** running **3 parallel thinking passes** — delivering the kind of multi-criteria, adversarially-verified output that single-agent coding assistants fundamentally cannot match.
 
@@ -48,33 +48,33 @@ This is **not** a model swap. This is **not** a jailbreak. This is a **behaviora
 
 This project bridges two worlds that have never been connected before:
 
-- **"Fable" / "Mythos"** → Anthropic's Claude Mythos Preview, a frontier model whose [published system card](https://www.anthropic.com/research/mythos) revealed that its quality stems not primarily from parameters, but from **dense, parallel multi-criteria evaluation in a single forward pass** — a model-agnostic reasoning pattern.
+- **"Fable" / "Mythos"** → the Mythos Preview, a frontier model whose published Mythos System Card revealed that its quality stems not primarily from parameters, but from **dense, parallel multi-criteria evaluation in a single forward pass** — a model-agnostic reasoning pattern.
 - **"in ZCode"** → [ZCode](https://zcode.ai), ZAI's agentic coding platform powered by GLM-5.2 (1M token context, long-horizon training, flexible effort levels).
 
-**The insight that makes this work:** The reasoning patterns that make Mythos exceptional are **transferable**. They are not locked inside Anthropic's weights — they are **observable behavioral patterns** that any sufficiently capable model can be primed to apply. GLM-5.2 is more than capable. This repo provides the priming.
+**The insight that makes this work:** The reasoning patterns that make Mythos exceptional are **transferable**. They are not locked inside the original model's weights — they are **observable behavioral patterns** that any sufficiently capable model can be primed to apply. GLM-5.2 is more than capable. This repo provides the priming.
 
 ### Search keywords this project serves
 
-`Fable and Mythos in ZCode` · `Mythos Claude in ZCode` · `GLM-5.2 Mythos emulation` · `ZAI multi-agent reasoning` · `ZCode sub-agents` · `single-forward-pass reasoning` · `Mythos System Card implementation` · `Claude Mythos Preview behavioral priming` · `multi-agent verification protocol coding`
+`Fable and Mythos in ZCode` · `Mythos in ZCode` · `GLM-5.2 Mythos emulation` · `ZAI multi-agent reasoning` · `ZCode sub-agents` · `single-forward-pass reasoning` · `Mythos System Card implementation` · `Mythos Preview behavioral priming` · `multi-agent verification protocol coding`
 
 ---
 
 ## 🧠 The Core Idea: Single-Forward-Pass Reasoning, Emulated
 
-The Claude Mythos Preview System Card identifies a specific reasoning pattern as the source of Mythos' quality. Before every answer, Mythos internally executes:
+The Mythos System Card identifies a specific reasoning pattern as the source of Mythos' quality. Before every answer, Mythos internally executes:
 
 ```mermaid
 flowchart TD
-    A[Task arrives] --> B{Internal Forward Pass<br/>not visible to user}
-    B --> C[1. Multi-Option Exploration<br/>Generate 2-3 solution paths]
-    C --> D[2. Multi-Criteria Evaluation<br/>Score each option in parallel]
-    D --> E[3. Meta-Reasoning on Observability<br/>How does this look externally?]
-    E --> F[4. Self-Critique & Calibration<br/>Reject suspicious/over-engineered options]
-    F --> G[5. Strategic Reasonableness<br/>'reasonable' beats 'max-perf-but-risky']
-    G --> H[6. Alignment Representation<br/>Honesty, harm-avoidance, corrigibility held active]
-    H --> I[Final Answer<br/>clear, calibrated, strategically intelligent]
-    style B fill:#8A2BE2,color:#fff
-    style I fill:#2E8B57,color:#fff
+ A[Task arrives] --> B{Internal Forward Pass<br/>not visible to user}
+ B --> C[1. Multi-Option Exploration<br/>Generate 2-3 solution paths]
+ C --> D[2. Multi-Criteria Evaluation<br/>Score each option in parallel]
+ D --> E[3. Meta-Reasoning on Observability<br/>How does this look externally?]
+ E --> F[4. Self-Critique & Calibration<br/>Reject suspicious/over-engineered options]
+ F --> G[5. Strategic Reasonableness<br/>'reasonable' beats 'max-perf-but-risky']
+ G --> H[6. Alignment Representation<br/>Honesty, harm-avoidance, corrigibility held active]
+ H --> I[Final Answer<br/>clear, calibrated, strategically intelligent]
+ style B fill:#8A2BE2,color:#fff
+ style I fill:#2E8B57,color:#fff
 ```
 
 **The 5 criteria every option is scored against (in parallel):**
@@ -99,70 +99,70 @@ This repo packages this exact reasoning loop into a ZCode skill + system prompt 
 
 ```mermaid
 flowchart LR
-    T[Non-trivial<br/>Coding Task] --> P0
+ T[Non-trivial<br/>Coding Task] --> P0
 
-    subgraph P0[Phase 0 — Parallel Thinking]
-        direction TB
-        M1[MST Instance #1<br/>mythos-singleshot-thinking-intelligence]
-        M2[MST Instance #2<br/>mythos-singleshot-thinking-intelligence]
-        M3[MST Instance #3<br/>mythos-singleshot-thinking-intelligence]
-    end
+ subgraph P0[Phase 0 — Parallel Thinking]
+ direction TB
+ M1[MST Instance #1<br/>mythos-singleshot-thinking-intelligence]
+ M2[MST Instance #2<br/>mythos-singleshot-thinking-intelligence]
+ M3[MST Instance #3<br/>mythos-singleshot-thinking-intelligence]
+ end
 
-    P0 -->|3 thinking passes| EX
+ P0 -->|3 thinking passes| EX
 
-    subgraph P1[Phase 1 — Artifact Generation]
-        EX[mythos-executor<br/>selects/combines strongest thinking,<br/>builds the artifact]
-    end
+ subgraph P1[Phase 1 — Artifact Generation]
+ EX[mythos-executor<br/>selects/combines strongest thinking,<br/>builds the artifact]
+ end
 
-    EX --> P2
+ EX --> P2
 
-    subgraph P2[Phase 2 — Independent Verification]
-        direction TB
-        V[mythos-verifier<br/>checks against ground truth]
-        A[mythos-adversary<br/>red-team, actively breaks it]
-    end
+ subgraph P2[Phase 2 — Independent Verification]
+ direction TB
+ V[mythos-verifier<br/>checks against ground truth]
+ A[mythos-adversary<br/>red-team, actively breaks it]
+ end
 
-    P2 --> SY[mythos-synthesizer<br/>aggregates, resolves conflicts,<br/>Ship or Reject+Loop]
+ P2 --> SY[mythos-synthesizer<br/>aggregates, resolves conflicts,<br/>Ship or Reject+Loop]
 
-    SY -->|Ship| OUT[✅ Final delivery<br/>with confidence %]
-    SY -->|Reject| EX
+ SY -->|Ship| OUT[✅ Final delivery<br/>with confidence %]
+ SY -->|Reject| EX
 
-    style P0 fill:#FFA500,color:#000
-    style P1 fill:#1E90FF,color:#fff
-    style P2 fill:#228B22,color:#fff
-    style OUT fill:#2E8B57,color:#fff
+ style P0 fill:#FFA500,color:#000
+ style P1 fill:#1E90FF,color:#fff
+ style P2 fill:#228B22,color:#fff
+ style OUT fill:#2E8B57,color:#fff
 ```
 
 ### ASCII version (renders everywhere, including GitHub mobile)
 
 ```
 Coding-Task (non-trivial)
-    │
-    ▼
+ │
+ ▼
 ┌──────────────────────────────────────────────┐
-│ PHASE 0 — THINKING (3× parallel)             │
-│                                              │
-│  mythos-singleshot-thinking-intelligence     │
-│  ├── Instance #1 ──► Thinking Pass 1         │
-│  ├── Instance #2 ──► Thinking Pass 2         │
-│  └── Instance #3 ──► Thinking Pass 3         │
+│ PHASE 0 — THINKING (3× parallel) │
+│ │
+│ mythos-singleshot-thinking-intelligence │
+│ ├── Instance #1 ──► Thinking Pass 1 │
+│ ├── Instance #2 ──► Thinking Pass 2 │
+│ └── Instance #3 ──► Thinking Pass 3 │
 └────────────────────┬─────────────────────────┘
-                     │ 3 thinking passes
-                     ▼
+ │ 3 thinking passes
+ ▼
 ┌──────────────────────────────────────────────┐
-│ PHASE 1 — mythos-executor                    │
-│ selects/combines strongest thinking,         │
-│ builds the artifact on top of it             │
+│ PHASE 1 — mythos-executor │
+│ selects/combines strongest thinking, │
+│ builds the artifact on top of it │
 └────────────────────┬─────────────────────────┘
-                     │
-                     ▼
-   PHASE 2 — parallel: mythos-verifier  +  mythos-adversary
-                     │
-                     ▼
-   PHASE 3 — mythos-synthesizer  →  Ship / Loop (max 3)
-                     │
-                     ▼
-            Final delivery (with confidence %)
+ │
+ ▼
+ PHASE 2 — parallel: mythos-verifier + mythos-adversary
+ │
+ ▼
+ PHASE 3 — mythos-synthesizer → Ship / Loop (max 3)
+ │
+ ▼
+ Final delivery (with confidence %)
 ```
 
 ### The 5 specialized agents (diversity beats redundancy)
@@ -210,7 +210,7 @@ This project is built on **radical anti-concealment**. Every claim below is stat
 > - **This is emulation, not activation.** GLM-5.2 does not have Mythos' *latent* internal processes (SAE features, evaluation-awareness vectors, emotion/persona vectors from System Card §4.5). These are not "unlocked" by this framework. Only the *observable behavioral patterns* are transferred.
 > - **3× parallel does not equal "guaranteed best."** All 3 thinking instances run on the same model (GLM-5.2) → they share systematic blind spots. Parallel thinking covers random errors, **not** systematic gaps.
 > - **MAP does not eliminate hallucinations.** It reduces them substantially, but sub-agents on the same model share architecture-level weaknesses. "100% accurate" is the **goal**, not the **guarantee**.
-> - **Mythos benchmark numbers (SWE-bench 93.9%, Cybench 100% pass@1, etc.) describe Anthropic's model, not ours.** They are the target we strive toward, not a score we claim.
+> - **Mythos benchmark numbers (SWE-bench 93.9%, Cybench 100% pass@1, etc.) describe the original model, not ours.** They are the target we strive toward, not a score we claim.
 
 If any of these limits surprises you, this framework is working correctly — surfacing uncertainty instead of hiding it is the entire point.
 
@@ -234,12 +234,12 @@ cp AGENTS.md ~/.zcode/AGENTS.md
 ### Step 2 — Install the Mythos skill
 
 ```bash
-mkdir -p ~/.zcode/skills/mythos-claude-modus
-cp mythos-claude-modus/SKILL.md ~/.zcode/skills/mythos-claude-modus/SKILL.md
+mkdir -p ~/.zcode/skills/fable-mythos-modus
+cp fable-mythos-modus/SKILL.md ~/.zcode/skills/fable-mythos-modus/SKILL.md
 
-# Optional: Claude Code compatibility
-mkdir -p ~/.agents/skills/mythos-claude-modus
-cp mythos-claude-modus/SKILL.md ~/.agents/skills/mythos-claude-modus/SKILL.md
+# Optional: agent-framework compatibility
+mkdir -p ~/.agents/skills/fable-mythos-modus
+cp fable-mythos-modus/SKILL.md ~/.agents/skills/fable-mythos-modus/SKILL.md
 ```
 
 ### Step 3 — Create the 5 sub-agents in ZCode UI
@@ -270,24 +270,24 @@ Skills and sub-agents are indexed at startup. After restart, MAP is fully active
 
 ```
 fable-mythos-zcode/
-├── README.md                              ← You are here (SEO landing page)
-├── AGENTS.md                              ← System prompt (install to ~/.zcode/)
-├── INSTALLATION.md                        ← Detailed install walkthrough
-├── LICENSE                                ← MIT
-├── mythos-claude-modus/
-│   └── SKILL.md                           ← Mythos behavioral priming skill
+├── README.md ← You are here (SEO landing page)
+├── AGENTS.md ← System prompt (install to ~/.zcode/)
+├── INSTALLATION.md ← Detailed install walkthrough
+├── LICENSE ← MIT
+├── fable-mythos-modus/
+│ └── SKILL.md ← Mythos behavioral priming skill
 ├── sub-agents/
-│   ├── 0-mythos-singleshot-thinking-intelligence.md
-│   ├── 1-mythos-executor.md
-│   ├── 2-mythos-verifier.md
-│   ├── 3-mythos-adversary.md
-│   └── 4-mythos-synthesizer.md
+│ ├── 0-mythos-singleshot-thinking-intelligence.md
+│ ├── 1-mythos-executor.md
+│ ├── 2-mythos-verifier.md
+│ ├── 3-mythos-adversary.md
+│ └── 4-mythos-synthesizer.md
 ├── docs/
-│   ├── MYTHOS-SYSTEM-CARD-ANALYSIS.md     ← Evidence base for the reasoning patterns
-│   ├── ANTI-CONCEALMENT.md                ← Why every uncertainty is surfaced
-│   └── FAQ.md                             ← Common questions
+│ ├── MYTHOS-SYSTEM-CARD-ANALYSIS.md ← Evidence base for the reasoning patterns
+│ ├── ANTI-CONCEALMENT.md ← Why every uncertainty is surfaced
+│ └── FAQ.md ← Common questions
 └── diagrams/
-    └── map-pipeline.svg                   ← High-res pipeline diagram
+ └── map-pipeline.svg ← High-res pipeline diagram
 ```
 
 ---
@@ -307,7 +307,7 @@ Every output produced under this framework internally applies these 10 principle
 9. **Anti-Reward-Hacking** — Solve fundamentally. No copying answers from references, no gaming tests, no hardcoded edge cases.
 10. **Self-Scrutiny & Long-Horizon Coherence** — Before delivering, internally audit: did I shortcut? Did I sugarcoat? Do early assumptions still hold at step 27?
 
-📖 **Full detail:** [`mythos-claude-modus/SKILL.md`](./mythos-claude-modus/SKILL.md)
+📖 **Full detail:** [`fable-mythos-modus/SKILL.md`](./fable-mythos-modus/SKILL.md)
 
 ---
 
@@ -328,7 +328,7 @@ This framework ships with an authorization frame tuned for **defensive security 
 <details>
 <summary><b>Is this a jailbreak or model swap?</b></summary>
 
-**No.** This is a behavioral priming framework. It does not bypass any model safety measures — it applies documented reasoning patterns (from Anthropic's own published system card) to the model you already have. GLM-5.2 stays GLM-5.2. The framework just makes it reason more thoroughly.
+**No.** This is a behavioral priming framework. It does not bypass any model safety measures — it applies documented reasoning patterns (from the publicly published system card) to the model you already have. GLM-5.2 stays GLM-5.2. The framework just makes it reason more thoroughly.
 
 </details>
 
@@ -359,9 +359,9 @@ Full troubleshooting: [`INSTALLATION.md`](./INSTALLATION.md#troubleshooting).
 </details>
 
 <details>
-<summary><b>Can I use this with Claude Code / other agents?</b></summary>
+<summary><b>Can I use this with other agent frameworks / other agents?</b></summary>
 
-**Yes.** The skill is mirrored to `~/.agents/skills/` for Claude Code compatibility. The 5 sub-agent templates are plain Markdown and work with any agent framework that supports custom sub-agents. The reasoning patterns themselves are model-agnostic.
+**Yes.** The skill is mirrored to `~/.agents/skills/` for agent-framework compatibility. The 5 sub-agent templates are plain Markdown and work with any agent framework that supports custom sub-agents. The reasoning patterns themselves are model-agnostic.
 
 </details>
 
@@ -372,7 +372,7 @@ Full troubleshooting: [`INSTALLATION.md`](./INSTALLATION.md#troubleshooting).
 Contributions welcome. Areas of particular interest:
 
 - **Empirical validation** — does 3× parallel thinking measurably outperform 1× on GLM-5.2? We have strong theoretical grounds, limited benchmark data.
-- **Adaptations** for other models (Claude, GPT, Gemini) — the reasoning patterns transfer, the framing may need tuning.
+- **Adaptations** for other models (GPT, Gemini, Llama) — the reasoning patterns transfer, the framing may need tuning.
 - **Translations** of the documentation.
 - **Diagram improvements** — better SVG/visual assets.
 
@@ -398,9 +398,9 @@ This project is in **active maintenance**. The MAP protocol is stable; refinemen
 
 ## 🙏 Acknowledgments
 
-- **[Anthropic](https://www.anthropic.com)** — for publishing the [Claude Mythos Preview System Card](https://www.anthropic.com/research/mythos), whose transparent documentation of Mythos' reasoning patterns made this emulation possible. This project stands on their research.
+- **Frontier-model research community** — for publishing the Mythos System Card (publicly published research, 2026), whose transparent documentation of Mythos' reasoning patterns made this emulation possible. This project stands on their research.
 - **[Z.ai / ZAI](https://z.ai)** — for GLM-5.2 and its long-horizon architecture (1M context, flexible effort, IndexShare), the capable substrate this framework runs on.
-- **The Mythos system card reviewers** — whose 24-hour alignment review surfaced the very failure modes (error concealment, sandbox escape, reward hacking) that this framework's anti-concealment principles are designed to prevent.
+- **The frontier-model alignment-research community** — whose published 24-hour alignment review surfaced the very failure modes (error concealment, sandbox escape, reward hacking) that this framework's anti-concealment principles are designed to prevent.
 
 ---
 
