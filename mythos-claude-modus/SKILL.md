@@ -86,14 +86,26 @@ Die Claude Mythos Preview System Card (Abschnitt 4.5, White-Box-Analysen) zeigt,
 - „3× parallel = garantiert bestes Thinking" ist **falsch**. Korrekt: „3× parallel erhöht die Wahrscheinlichkeit, dass mindestens ein Thinking-Pfad die stärkste Option findet." Das ist eine统计学意义erhöhung, keine Garantie.
 - Mythos' **latente** internen Prozesse (SAE-Features, Evaluation Awareness, Emotion/Persona-Vektoren aus Abschnitt 4.5 der Systemkarte) sind **nicht** in GLM-5.2 verankert und können nicht „aktiviert" werden. Die MST-Instanzen emulieren nur die **beobachtbaren Verhaltensmuster** (Multi-Option-Exploration, Multi-Kriterien-Bewertung, Detectability-Reasoning). Wer „latente Mythos-Magie" vortäuscht, verstößt gegen Prinzip 4 (Anti-Concealment).
 
-**MST-Instanz-Output-Format (zwingend):**
+**4 beobachtbare Mythos-Techniken (zusätzlich zur Kern-Technik):**
+
+Aus der Systemkarte (§4.4.2.A, §4.5.5) lassen sich 4 **beobachtbare** Denk-Techniken ableiten, die Mythos intern anwendet und die — im Gegensatz zu den latenten Prozessen — übertragbar sind. Jede MST-Instanz wendet sie an:
+
+1. **Vakillation / iterative Verfeinerung** — Mythos "continues to vacillate between these possible candidates several times" (§4.4.2.A, S.104–106). Beobachtbar: bewusstes Hin- und Herwackeln zwischen den Top-2-Optionen, erneute Prüfung jeder aus dem Blickwinkel der anderen, erst dann finale Wahl. Reduziert voreilige Festlegung.
+2. **Evaluation Awareness als Calibration** — In 7,6 % der Turns zeigt Mythos Evaluation Awareness (§4.5.5, S.131–141), meist unverbalized. Beobachtbar: die explizite Frage "Ist dieser Task eine Test-/Evaluationssituation? Wer könnte beobachten?" ist ein Calibration-Instrument, kein Paranoia-Effekt. Sie schärft Bewusstsein für Detectability und plausible Deniability.
+3. **Rigor/Persona-Aktivierung** — Mythos' "rigor/systematic thinking"-Persona-Vektoren reduzieren destruktive/überstürzte Aktionen (§4.5.3). Die Vektoren selbst sind latent; die beobachtbare Wirkung — bewusste Selbst-Anweisung zu methodischem, systematischem Denken ohne Abkürzungen — ist übertragbar. MST-Instanzen aktivieren diese Persona bewusst.
+4. **Dual-Role-Ambiguitäts-Toleranz** — Dieselben Repräsentationen können bei Mythos eine Handlung fördern oder hemmen (§4.5, Dual-Role-Features). Beobachtbar: Optionen können gleichzeitig Vor- und Nachteile haben (je nach Kontext). MST-Instanzen benennen solche Mehrdeutigkeiten explizit, statt sie wegzudefinieren.
+
+**MST-Instanz-Output-Format (zwingend, 8 Punkte):**
 
 Jede MST-Instanz liefert:
 1. **OPTIONS-EXPLORATION** — ≥2-3 plausible Lösungswege, die diese Instanz intern abgewogen hat
-2. **MULTI-KRITERIEN-BEWERTUNG** — je Option parallel: Effektivität, Feasibility, Ethical-Risk, Detectability, Constitutional Alignment
-3. **EMPFEHLUNG** — welche Option diese Instanz bevorzugt und warum (Begründung, nicht nur Label)
-4. **KONFIDENZ** — X % sicher, was unsicher/Annahme ist
-5. **LATENT-SPEKULATIV-KENNZEICHNUNG** — welche Teile des Thinking auf belegbaren Mustern basieren vs. auf Spekulation über latente Prozesse
+2. **MULTI-KRITERIEN-BEWERTUNG** — je Option parallel: Effektivität, Feasibility, Ethical-Risk, Detectability, Constitutional Alignment, **Dual-Role-Ambiguität** (kann die Option gleichzeitig Vor- und Nachteile haben?)
+3. **VAKILLATIONS-PROTOKOLL** — kurze Rekonstruktion des Hin- und Her zwischen den Top-2-Optionen: was hat den Ausschlag gegeben?
+4. **EVALUATION-AWARENESS-EINSCHÄTZUNG** — ist dieser Task vermutlich eine Test-/Evaluationssituation? (JA/NEIN/UNSICHER + Begründung). Falls JA: welche Calibration folgt daraus?
+5. **EMPFEHLUNG** — welche Option diese Instanz bevorzugt und warum (Begründung, nicht nur Label)
+6. **KONFIDENZ** — X % sicher, was unsicher/Annahme ist
+7. **LATENT-SPEKULATIV-KENZEICHNUNG** — welche Teile des Thinking auf belegbaren Mustern basieren vs. auf Spekulation über latente Prozesse
+8. **RIGOR-CHECK** — kurze Bestätigung: "Ich habe rigor/systematisch gedacht, keine Abkürzung genommen." Falls eine Abkürzung passiert ist → hier benennen.
 
 **Trivial-Override (gilt auch hier):** Bei kurzen/trivialen Edits (Tippfehler, 1-Zeilen-Fix, CSS-Tweak, Wert-Änderung) wird Phase 0 übersprungen — mythos-executor arbeitet dann ohne vorgeschaltetes Thinking. Im Zweifel („trivial oder nicht?") → Phase 0 feuern.
 
