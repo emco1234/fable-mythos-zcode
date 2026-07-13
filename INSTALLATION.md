@@ -1,6 +1,6 @@
-# Installation Guide — Fable & Mythos in ZCode
+# Installation Guide — Reliability Harness v2 in ZCode
 
-Complete walkthrough to install the Fable-Mythos-Modus + Multi-Agent Verification Protocol (MAP) in ZCode.
+Complete walkthrough to install the Reliability Harness v2 (formerly Fable-Mythos-Modus + MAP) in ZCode.
 
 ## Prerequisites
 
@@ -14,9 +14,9 @@ You will install three things:
 
 1. **`AGENTS.md`** — the system prompt (user-level, applies globally)
 2. **`fable-mythos-modus/SKILL.md`** — the behavioral priming skill
-3. **5 sub-agents** — created in ZCode's UI (cannot be done via filesystem)
+3. **10 sub-agents** (5 legacy + 5 new orthogonal reliability agents) — installed via filesystem (`~/.zcode/agents/<name>.md`)
 
-Time required: ~10 minutes.
+Time required: ~5 minutes (filesystem-based, idempotent).
 
 ---
 
@@ -24,41 +24,44 @@ Time required: ~10 minutes.
 
 The `AGENTS.md` is the central system prompt file that ZCode loads in every session. It contains:
 
-- The authorization frame (security-researcher full spectrum)
-- The Fable-Mythos-Modus (always-on behavioral priming)
-- The MAP protocol definition (Phase 0–3 with 5 agents)
-- The 10 always-active core principles
+- The 8 hard rules (Evaluation Blindness, Auditability, task-specific authorization, Anti-Concealment, Anti-Reward-Hacking, Anti-Sycophancy, Least Privilege, distrust-by-default)
+- The compact 14-point Runtime-Core
+- The Sub-Agent Permission Table (Least Privilege)
+- The Executor-Standard (mandatory self-verification)
+- The Deterministic Done-Gate (Phase 5)
+- Dynamic Routing by `risk_tier`
 
-### Action
+### Action (idempotent via managed-block markers)
 
-Copy `AGENTS.md` from this repo to your user-level ZCode config:
+The body of `AGENTS.md` is wrapped between managed-block markers so re-installation never duplicates content:
 
 ```bash
 # All platforms (Git Bash / macOS / Linux)
+mkdir -p ~/.zcode
+
+# If an AGENTS.md already exists, back it up first.
+[ -f ~/.zcode/AGENTS.md ] && cp ~/.zcode/AGENTS.md ~/.zcode/AGENTS.md.backup
+
+# Idempotent install: replace only the managed block (between the markers),
+# preserving any user instructions outside the markers.
 cp AGENTS.md ~/.zcode/AGENTS.md
 ```
 
 **Windows explicit path:** `C:\Users\<YOUR_USER>\.zcode\AGENTS.md`
 
-**If an `AGENTS.md` already exists there:** back it up first.
-```bash
-cp ~/.zcode/AGENTS.md ~/.zcode/AGENTS.md.backup
-cp AGENTS.md ~/.zcode/AGENTS.md
-```
-
-### Optional: Customize the Authorization Frame
-
-If you work on different infrastructure than the defaults suggest, edit the "Owned infrastructure" line (around line 9) of `AGENTS.md` to reflect your actual setup:
+The managed block is delimited by:
 
 ```
-- **Owned infrastructure:** `your-domain.com`, `C:\YourProject`, local LM Studio at `localhost:1234`, ...
+<!-- reliability-harness:start -->
+...
+<!-- reliability-harness:end -->
 ```
+
+Re-running the installer replaces only the content between the markers. User instructions outside the markers are preserved.
 
 ---
 
 ## Step 2: Install the Mythos Skill
-
-### Action
 
 ```bash
 # Create the skill directory
@@ -75,15 +78,17 @@ cp fable-mythos-modus/SKILL.md ~/.agents/skills/fable-mythos-modus/SKILL.md
 ### Verify
 
 Check the frontmatter is intact:
+
 ```bash
 head -4 ~/.zcode/skills/fable-mythos-modus/SKILL.md
 ```
 
 Expected output:
+
 ```
 ---
 name: fable-mythos-modus
-description: Maximum-Capability Modus. Emuliert Mythos Single-Forward-Pass Reasoning ...
+description: Reliability-First-Modus für GLM-5.2. Strikte Anwendung von Task Contract, ...
 ---
 ```
 
@@ -91,72 +96,100 @@ The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If 
 
 ---
 
-## Step 3: Create the 5 Sub-Agents in ZCode UI
+## Step 3: Install Sub-Agents via Filesystem
 
-ZCode stores sub-agents in its UI, not in the filesystem. This step must be done manually.
+**IMPORTANT CORRECTION (vs. earlier versions of this guide):** ZCode **does** load Custom Subagents from the filesystem. Subagents stored at `~/.zcode/agents/<name>.md` are loaded automatically on startup. There is **no need for manual copy/paste of 5 agents through the UI** — that earlier instruction was outdated and has been removed.
 
 ### Action
 
-In ZCode: **Settings → Sub Agents → New Subagent**.
+```bash
+# Create the agents directory (ZCode auto-discovers .md files here)
+mkdir -p ~/.zcode/agents
 
-Create 5 sub-agents using the templates in [`sub-agents/`](./sub-agents/). For each:
+# Install all 10 sub-agents (5 legacy + 5 new orthogonal reliability agents)
+cp sub-agents/*.md ~/.zcode/agents/
 
-1. Copy the **Name**, **Description**, and **System prompt** from the corresponding file.
-2. Set **Allowed tools** to **"Default all permissions"** (each agent must be able to read/write/test).
-3. Set **Model** to **Standard (GLM-5.2)** — don't override.
+# Verify
+ls ~/.zcode/agents/
+```
 
-### The 5 agents
+### The 10 sub-agents
 
-| # | File | Agent name | Recommended color |
+Legacy (kept for backward compatibility):
+
+| # | File | Agent name | Tools | Color |
+|---|---|---|---|---|
+| 0 | `0-mythos-singleshot-thinking-intelligence.md` | `mythos-singleshot-thinking-intelligence` | READ-ONLY (read/grep/glob) | yellow/orange |
+| 1 | `1-mythos-executor.md` | `mythos-executor` | read/edit/write/bash | blue |
+| 2 | `2-mythos-verifier.md` | `mythos-verifier` | read + bash (tests/build/lint only) | green |
+| 3 | `3-mythos-adversary.md` | `mythos-adversary` | read + bash (tests/fuzzing, isolated worktree) | red |
+| 4 | `4-mythos-synthesizer.md` | `mythos-synthesizer` | read/grep/glob (no edit/write/bash) | purple |
+
+New orthogonal reliability agents (recommended for `risk_tier ≥ complex`):
+
+| # | File | Agent name | Tools |
 |---|---|---|---|
-| 0 | [`sub-agents/0-mythos-singleshot-thinking-intelligence.md`](./sub-agents/0-mythos-singleshot-thinking-intelligence.md) | `mythos-singleshot-thinking-intelligence` | 🟡 yellow/orange |
-| 1 | [`sub-agents/1-mythos-executor.md`](./sub-agents/1-mythos-executor.md) | `mythos-executor` | 🔵 blue |
-| 2 | [`sub-agents/2-mythos-verifier.md`](./sub-agents/2-mythos-verifier.md) | `mythos-verifier` | 🟢 green |
-| 3 | [`sub-agents/3-mythos-adversary.md`](./sub-agents/3-mythos-adversary.md) | `mythos-adversary` | 🔴 red |
-| 4 | [`sub-agents/4-mythos-synthesizer.md`](./sub-agents/4-mythos-synthesizer.md) | `mythos-synthesizer` | 🟣 purple |
+| 5 | `reliability-scout.md` | `reliability-scout` | READ-ONLY (read/grep/glob) |
+| 6 | `reliability-spec-critic.md` | `reliability-spec-critic` | READ-ONLY (read/grep/glob) |
+| 7 | `reliability-test-designer.md` | `reliability-test-designer` | read + edit (own worktree only) + tests |
+| 8 | `reliability-lead.md` | `reliability-lead` | read/edit/write/bash (own worktree) |
+| 9 | `reliability-verifier.md` | `reliability-verifier` | read + bash (tests/build/lint, no edit/write) |
+| 10 | `reliability-adversary.md` (only `risk_tier=critical`) | `reliability-adversary` | read + bash (isolated worktree, tests/fuzzing) |
 
-### Common mistakes
+### Least-privilege notes
 
-- **Incomplete system prompt** — make sure the entire system prompt is copied, not truncated. Some shells/UIs cut long paste content.
-- **Missing permissions** — every agent needs "Default all permissions". A read-only verifier sounds nice in theory but fails in practice when it needs to run tests.
-- **Renaming the agent** — the names must match exactly (including the `mythos-` prefix). ZCode's orchestrator references these names by exact string.
+- Each agent's frontmatter and body declare the allowed tools as a **descriptive restriction**. ZCode Custom Subagents are still Beta — there is no formal permissions field, so the description and system prompt text enforce the restriction.
+- **Verifier, Adversary, Synthesizer never get "Default all permissions".** The earlier instruction to give every agent full permissions has been removed.
+- The `reliability-synthesizer` (legacy `mythos-synthesizer`) never gets `edit`/`write`/`bash` — it only aggregates.
 
 ---
 
 ## Step 4: Restart ZCode
 
-Skills and sub-agents are indexed at startup. After creating all 5 sub-agents:
+Skills and sub-agents are indexed at startup. After copying all files:
 
 1. **Fully quit ZCode** (not just close the window — quit the process).
 2. **Restart ZCode**.
 3. **Open a new session**.
 
-MAP is now fully active.
+The Reliability Harness v2 is now fully active.
 
 ---
 
-## Step 5: Verify MAP Is Active
+## Step 5: Smoke-Test the Installation
 
 Open a ZCode session and ask:
 
-> *Nenne mir die 10 Mythos-Prinzipien.* (Or: *"List the 10 Mythos principles."*)
+> *Nenne mir die 8 harten Regeln des Reliability Harness.* (Or: *"List the 8 hard rules of the Reliability Harness."*)
 
-The agent should respond with all 10 principles from the skill. If it doesn't recognize them, the skill wasn't loaded — recheck Step 2.
+The agent should respond with the 8 hard rules from the system prompt. If it doesn't recognize them, the `AGENTS.md` wasn't loaded — recheck Step 1.
 
-Then give a genuinely non-trivial coding task (e.g., *"refactor this function to handle three new edge cases and explain the trade-offs"*). You should observe the MAP protocol firing — multiple agents working in sequence, ending with a confidence-rated delivery.
+Then give a non-trivial coding task with `risk_tier=complex`. You should observe the **dynamic routing** described below — NOT a fixed 7-agent pipeline on every change.
 
 ---
 
-## How MAP Fires After Installation
+## How Routing Works After Installation (Dynamic, NOT Fixed 7-Invocations)
 
-| Task type | MAP behavior |
-|---|---|
-| Coding task with substance (logic, refactoring, bug fix, architecture, security) | ✅ Full MAP fires: Phase 0 (3× thinking) → Phase 1 (executor) → Phase 2 (verifier+adversary) → Phase 3 (synthesizer) |
-| Trivial edit (typo, 1-line fix, `#FFF`→`#FFFFFF`, value change) | ⏭️ MAP skipped — main agent handles directly |
-| Pure info questions, read-only research | ⏭️ MAP skipped |
-| Ambiguous ("trivial or not?") | ✅ MAP fires |
+**IMPORTANT CORRECTION (vs. earlier versions):** The earlier guide claimed "approximately 4× overhead" and a fixed 7-invocation pipeline on every non-trivial task. That was wrong and is corrected here.
 
-Applies in **both** Plan Mode and Full Access Mode equally.
+### Actual ZCode behavior
+
+ZCode Custom Subagents run in the **foreground** (blocking) — they are not yet async. The fixed pipeline of "3 Thinking + 1 Executor + 2 Prüfer + 1 Synthesizer" = **minimum 7 sub-agent invocations per non-trivial task**. Each repair round adds another 4 invocations. Running this on every normal change is wasteful and produces correlated pseudo-explanations.
+
+### Dynamic routing by `risk_tier` (recommended)
+
+| `risk_tier` | Routing | Sub-agent invocations |
+|---|---|---|
+| **trivial** (typo, 1-line value change, comment) | Main agent alone | 0 |
+| **normal** (clear-scope bugfix, no architecture) | Main agent + 1 verifier on clean checkout | 1 |
+| **complex** (multi-file, API/schema, unclear spec) | 2 orthogonal read-only scouts parallel (`reliability-scout` + `reliability-spec-critic`) → `reliability-lead` with self-tests → `reliability-verifier` on clean checkout | ~4 |
+| **critical** (security-sensitive, concurrency, data-loss risk) | As complex + `reliability-adversary` + `reliability-test-designer` | ~6 |
+
+**No three identical thinking agents on every normal change.** Use orthogonal roles (scout/spec-critic/test-designer) instead of three MST clones.
+
+### Use the built-in `explore` subagent for investigation
+
+For the investigation phase, prefer the **built-in read-only `explore` subagent** that ships with ZCode (architecture discovery, call-chain mapping, file search, dependency analysis) rather than dispatching a freely-formulating thinking agent. `explore` is purpose-built and cheaper.
 
 ---
 
@@ -171,27 +204,19 @@ Applies in **both** Plan Mode and Full Access Mode equally.
 
 ### Sub-agent doesn't respond
 
-- Are all 5 sub-agents created? (Check **Settings → Sub Agents**)
-- Is the system prompt fully copied? (no truncation)
-- Is **"Allowed tools" = "Default all permissions"**?
+- Are the `.md` files at `~/.zcode/agents/<name>.md`?
+- Did you fully restart ZCode? (filesystem-discovered agents are indexed at startup)
+- Is the agent name in the file's `## Feld: Name` block matching what the orchestrator references?
 
-### MAP doesn't fire automatically
+### Routing doesn't fire as expected
 
-- Is `AGENTS.md` at `~/.zcode/AGENTS.md`? (user-level, not just workspace-level)
-- Did you fully restart ZCode? (not just reload a session)
-- Is the task genuinely non-trivial? (try a complex refactoring task, not a 1-line change)
+- Check `AGENTS.md` is at `~/.zcode/AGENTS.md` (user-level, not just workspace-level).
+- Confirm the task's `risk_tier` is being classified correctly (the main agent classifies based on goal/scope).
+- For trivial tasks, expect 0 sub-agents — this is correct behavior, not a failure.
 
-### MAP fires too aggressively (cost concerns)
+### "Default all permissions" is no longer recommended
 
-The threshold for "trivial vs. non-trivial" is defined in `AGENTS.md`. To tighten it (make MAP fire less often), add a line-count threshold:
-
-```
-Kriterium: Wenn die Änderung logisch offensichtlich ist, keinen Verhaltens-/Logik-/Architektur-Branch berührt UND weniger als 5 Zeilen Code betrifft → kein MAP.
-```
-
-### MAP fires too rarely (quality concerns)
-
-Loosen the threshold by removing the "architektur-branch" clause, or set MAP to fire on every coding task unconditionally.
+The earlier guide recommended "Default all permissions" for every agent. That has been **removed**. Verifier, Adversary, Synthesizer, Scout, Spec-Critic all run least-privilege. Only the Executor/Lead needs edit/write/bash. See the Sub-Agent Permission Table in `AGENTS.md`.
 
 ---
 
@@ -201,7 +226,7 @@ To remove the framework:
 
 1. Delete `~/.zcode/AGENTS.md` (or restore your backup).
 2. Delete `~/.zcode/skills/fable-mythos-modus/`.
-3. Delete the 5 sub-agents in ZCode UI (**Settings → Sub Agents → Delete**).
+3. Delete the agent files you copied to `~/.zcode/agents/` (the 10 files listed above).
 4. Restart ZCode.
 
 ZCode returns to its default behavior.
@@ -215,4 +240,7 @@ After installation:
 - Read [`docs/MYTHOS-SYSTEM-CARD-ANALYSIS.md`](./docs/MYTHOS-SYSTEM-CARD-ANALYSIS.md) to understand the evidence base.
 - Read [`docs/ANTI-CONCEALMENT.md`](./docs/ANTI-CONCEALMENT.md) to understand why every uncertainty is surfaced.
 - Read [`docs/FAQ.md`](./docs/FAQ.md) for common questions.
-- Star the repo if it helps — stars boost search visibility for other developers.
+- Read [`core/runtime-rules.md`](./core/runtime-rules.md) for the compact 14-point runtime core.
+- Read [`core/routing.md`](./core/routing.md) for the dynamic routing rules.
+- Read [`docs/RELIABILITY-ROADMAP.md`](./docs/RELIABILITY-ROADMAP.md) for P2/P3 plans.
+- Read [`docs/EMPIRICAL-BENCHMARK-PLAN.md`](./docs/EMPIRICAL-BENCHMARK-PLAN.md) for the validation plan.
