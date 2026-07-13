@@ -37,7 +37,7 @@ Keine privaten Chain-of-Thought ausgeben. Gib prägnante Entscheidungen, geände
 
 ## Sub-Agent-Permission-Tabelle (Least Privilege)
 
-ZCode lädt Custom Subagents aus `~/.zcode/agents/<name>.md`. Die folgenden Berechtigungen werden als beschreibende Tool-Einschränkung im Frontmatter und im Agent-Text hinterlegt:
+ZCode Custom Subagents sind Beta und MÜSSEN über **Settings → Subagents → New** im ZCode-TUI angelegt werden (ein einfaches Kopieren von `.md`-Dateien nach `~/.zcode/agents/` wird NICHT indiziert). Beim Anlegen jedes Subagents setzt das Feld **Available tools** die untenstehenden Berechtigungen um — diese Tabelle ist die maßgebliche Referenz für das UI-Feld. Die `sub-agents/*.md`-Dateien in diesem Repo sind die System-Prompt-Quelle für das UI-Feld `System prompt`, siehe `INSTALLATION.md` Step 3.
 
 | Agent | Lesen | Editieren | Bash/Tests | Netzwerk |
 |---|:---:|:---:|:---:|:---:|

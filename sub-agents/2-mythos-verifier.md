@@ -1,5 +1,7 @@
 # Sub-Agent 2/5 — mythos-verifier
 
+> **This file is the SYSTEM-PROMPT SOURCE for the ZCode subagent named `mythos-verifier`.** Custom Subagents are Beta and are NOT auto-discovered from the filesystem. Create the subagent via **Settings → Subagents → New**, paste the `## Feld: Description` block into `Description`, paste the `## Feld: System prompt` body into `System prompt`, and set `Available tools` per the **Permission Table in `AGENTS.md`** (for this role: Read + Bash for tests/build/lint only — no Edit/Write). See `INSTALLATION.md` Step 3 for the full per-role field mapping.
+
 ## Feld: Name
 ```
 mythos-verifier

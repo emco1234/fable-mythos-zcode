@@ -1,5 +1,7 @@
 # Sub-Agent 4/5 — mythos-synthesizer
 
+> **This file is the SYSTEM-PROMPT SOURCE for the ZCode subagent named `mythos-synthesizer`.** Custom Subagents are Beta and are NOT auto-discovered from the filesystem. Create the subagent via **Settings → Subagents → New**, paste the `## Feld: Description` block into `Description`, paste the `## Feld: System prompt` body into `System prompt`, and set `Available tools` per the **Permission Table in `AGENTS.md`** (for this role: Read, Grep, Glob — no Edit/Write/Bash). See `INSTALLATION.md` Step 3 for the full per-role field mapping.
+
 ## Feld: Name
 ```
 mythos-synthesizer

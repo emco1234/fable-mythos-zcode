@@ -14,9 +14,9 @@ You will install three things:
 
 1. **`AGENTS.md`** — the system prompt (user-level, applies globally)
 2. **`fable-mythos-modus/SKILL.md`** — the behavioral priming skill
-3. **11 sub-agents** (5 legacy + 6 new orthogonal reliability agents) — installed via filesystem (`~/.zcode/agents/<name>.md`)
+3. **11 sub-agents** (5 legacy + 6 new orthogonal reliability agents) — created via the ZCode UI (**Settings → Subagents → New**). Custom Subagents are Beta; you must create each one in the UI, you cannot just copy `.md` files into `~/.zcode/agents/`.
 
-Time required: ~5 minutes (filesystem-based, idempotent).
+Time required: ~10-15 minutes (UI-based creation of 11 subagents; the harness block in `AGENTS.md` itself installs idempotently in seconds).
 
 ---
 
@@ -115,51 +115,59 @@ The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If 
 
 ---
 
-## Step 3: Install Sub-Agents via Filesystem
+## Step 3: Create Sub-Agents via ZCode UI
 
-> **Do I need to create the sub-agents manually?** No. ZCode **auto-discovers** Custom Subagents from `~/.zcode/agents/<name>.md` on startup. Copying the files is the entire install — there is no UI step and no manual agent creation.
+> **Custom Subagents are Beta and require UI-based creation.** ZCode Custom Subagents are a **Beta** feature. Per the official ZCode docs (https://zcode.z.ai/en/docs/subagents), you create them from **Settings → Subagents → New**. ZCode then writes the subagent as a Markdown file under `~/.zcode/agents/<name>.md` and loads it on the next run.
+>
+> **Manually copying `.md` files into `~/.zcode/agents/` is NOT sufficient.** ZCode only indexes a subagent after it has been created through the Settings UI. The `sub-agents/*.md` files in this repo are the **system-prompt source** (the prompt body you paste into the UI), not a drop-in install.
 
-**IMPORTANT CORRECTION (vs. earlier versions of this guide):** ZCode **does** load Custom Subagents from the filesystem. Subagents stored at `~/.zcode/agents/<name>.md` are loaded automatically on startup. There is **no need for manual copy/paste of 5 agents through the UI** — that earlier instruction was outdated and has been removed.
+### What you actually do (once per subagent, 11 in total)
 
-### Action
+For **each** of the 11 subagents listed in the table below:
 
-```bash
-# Create the agents directory (ZCode auto-discovers .md files here)
-mkdir -p ~/.zcode/agents
+1. Open **Settings → Subagents → New** in the ZCode TUI.
+2. Fill the fields:
+   - **Name**: the `Agent name` value from the table (e.g. `reliability-verifier`).
+   - **Description**: paste the text from the `## Feld: Description` block of the matching `sub-agents/*.md` file.
+   - **Available tools**: set according to the **Permission Table in `AGENTS.md`** (see the per-role mapping in the table below; this is the authoritative source — ZCode writes its own frontmatter when you save, so do not rely on any inline `Allowed tools` hint alone).
+   - **System prompt**: open the matching `sub-agents/*.md` file in this repo, copy the body **after** the `## Feld: System prompt` heading (the text inside the fenced block), and paste it here. Do not include the `## Feld: Name` / `## Feld: Description` blocks.
+3. Click **Save**. ZCode writes `~/.zcode/agents/<name>.md` and indexes the subagent on the next run.
+4. Repeat for all 11 subagents.
 
-# Install all 11 sub-agents (5 legacy + 6 new orthogonal reliability agents)
-cp sub-agents/*.md ~/.zcode/agents/
+> **Beta limitation note.** This per-subagent UI step exists because ZCode's Custom Subagents are still Beta and have no filesystem auto-discovery yet. If a later ZCode release adds true auto-discovery of `~/.zcode/agents/*.md`, this section will shrink to a single `cp` command. Until then, UI creation is required for the agents to be loaded.
 
-# Verify
-ls ~/.zcode/agents/
-```
+### Where to find each subagent's values
 
-### The 11 sub-agents
+The `sub-agents/*.md` files in this repo are the **prompt and configuration source** for the UI fields above — they are NOT a drop-in install. Each file contains a `## Feld: Name`, `## Feld: Description`, and `## Feld: System prompt` block whose contents you paste into the corresponding UI fields. The **Available tools** per role are listed in the table below and in the Sub-Agent Permission Table in `AGENTS.md`.
+
+### The 11 sub-agents (UI field values + available-tools mapping)
+
+> The **Available tools** column below is exactly what you set in the ZCode UI field `Available tools` for each role. The same mapping appears in the **Sub-Agent Permission Table** in `AGENTS.md`, which is the authoritative reference.
 
 Legacy (kept for backward compatibility):
 
-| # | File | Agent name | Tools | Color |
-|---|---|---|---|---|
-| 0 | `0-mythos-singleshot-thinking-intelligence.md` | `mythos-singleshot-thinking-intelligence` | READ-ONLY (read/grep/glob) | yellow/orange |
-| 1 | `1-mythos-executor.md` | `mythos-executor` | read/edit/write/bash | blue |
-| 2 | `2-mythos-verifier.md` | `mythos-verifier` | read + bash (tests/build/lint only) | green |
-| 3 | `3-mythos-adversary.md` | `mythos-adversary` | read + bash (tests/fuzzing, isolated worktree) | red |
-| 4 | `4-mythos-synthesizer.md` | `mythos-synthesizer` | read/grep/glob (no edit/write/bash) | purple |
+| # | File | Name (UI) | Description (UI) source | Available tools (UI) | Color (UI) |
+|---|---|---|---|---|---|
+| 0 | `0-mythos-singleshot-thinking-intelligence.md` | `mythos-singleshot-thinking-intelligence` | `## Feld: Description` in file | Read, Grep, Glob (read-only) | yellow/orange |
+| 1 | `1-mythos-executor.md` | `mythos-executor` | `## Feld: Description` in file | Read, Edit, Write, Bash | blue |
+| 2 | `2-mythos-verifier.md` | `mythos-verifier` | `## Feld: Description` in file | Read + Bash (tests/build/lint only) | green |
+| 3 | `3-mythos-adversary.md` | `mythos-adversary` | `## Feld: Description` in file | Read + Bash (tests/fuzzing, isolated worktree) | red |
+| 4 | `4-mythos-synthesizer.md` | `mythos-synthesizer` | `## Feld: Description` in file | Read, Grep, Glob (no Edit/Write/Bash) | purple |
 
 New orthogonal reliability agents (recommended for `risk_tier ≥ complex`):
 
-| # | File | Agent name | Tools |
-|---|---|---|---|
-| 5 | `reliability-scout.md` | `reliability-scout` | READ-ONLY (read/grep/glob) |
-| 6 | `reliability-spec-critic.md` | `reliability-spec-critic` | READ-ONLY (read/grep/glob) |
-| 7 | `reliability-test-designer.md` | `reliability-test-designer` | read + edit (own worktree only) + tests |
-| 8 | `reliability-lead.md` | `reliability-lead` | read/edit/write/bash (own worktree) |
-| 9 | `reliability-verifier.md` | `reliability-verifier` | read + bash (tests/build/lint, no edit/write) |
-| 10 | `reliability-adversary.md` (only `risk_tier=critical`) | `reliability-adversary` | read + bash (isolated worktree, tests/fuzzing) |
+| # | File | Name (UI) | Description (UI) source | Available tools (UI) |
+|---|---|---|---|---|
+| 5 | `reliability-scout.md` | `reliability-scout` | `## Feld: Description` in file | Read, Grep, Glob (read-only) |
+| 6 | `reliability-spec-critic.md` | `reliability-spec-critic` | `## Feld: Description` in file | Read, Grep, Glob (read-only) |
+| 7 | `reliability-test-designer.md` | `reliability-test-designer` | `## Feld: Description` in file | Read + Edit (own worktree only) + Bash (tests) |
+| 8 | `reliability-lead.md` | `reliability-lead` | `## Feld: Description` in file | Read, Edit, Write, Bash (own worktree) |
+| 9 | `reliability-verifier.md` | `reliability-verifier` | `## Feld: Description` in file | Read + Bash (tests/build/lint, no Edit/Write) |
+| 10 | `reliability-adversary.md` (only `risk_tier=critical`) | `reliability-adversary` | `## Feld: Description` in file | Read + Bash (isolated worktree, tests/fuzzing) |
 
 ### Least-privilege notes
 
-- Each agent's frontmatter and body declare the allowed tools as a **descriptive restriction**. ZCode Custom Subagents are still Beta — there is no formal permissions field, so the description and system prompt text enforce the restriction.
+- Each agent's system-prompt body declares the allowed tools as a **descriptive restriction**, and you must additionally enforce them in the ZCode UI field **Available tools** (per the table above / the Sub-Agent Permission Table in `AGENTS.md`).
 - **Verifier, Adversary, Synthesizer never get "Default all permissions".** The earlier instruction to give every agent full permissions has been removed.
 - The `reliability-synthesizer` (legacy `mythos-synthesizer`) never gets `edit`/`write`/`bash` — it only aggregates.
 
@@ -167,7 +175,7 @@ New orthogonal reliability agents (recommended for `risk_tier ≥ complex`):
 
 ## Step 4: Restart ZCode
 
-Skills and sub-agents are indexed at startup. After copying all files:
+Skills are indexed at startup. After creating all 11 subagents via the Settings UI and saving them:
 
 1. **Fully quit ZCode** (not just close the window — quit the process).
 2. **Restart ZCode**.
@@ -225,9 +233,9 @@ For the investigation phase, prefer the **built-in read-only `explore` subagent*
 
 ### Sub-agent doesn't respond
 
-- Are the `.md` files at `~/.zcode/agents/<name>.md`?
-- Did you fully restart ZCode? (filesystem-discovered agents are indexed at startup)
-- Is the agent name in the file's `## Feld: Name` block matching what the orchestrator references?
+- Did you create the subagent via **Settings → Subagents → New** and click **Save**? (ZCode only indexes subagents that were created through the UI — see Step 3. Dropping an `.md` file into `~/.zcode/agents/` is not sufficient in the current Beta.)
+- Did you fully restart ZCode after saving all 11 subagents? (subagents created in the UI are indexed on the next startup)
+- Is the agent name in the UI field `Name` matching what the orchestrator references (e.g. `reliability-verifier`, `mythos-executor`)?
 
 ### Routing doesn't fire as expected
 
@@ -247,7 +255,7 @@ To remove the framework:
 
 1. Delete `~/.zcode/AGENTS.md` (or restore your backup).
 2. Delete `~/.zcode/skills/fable-mythos-modus/`.
-3. Delete the agent files you copied to `~/.zcode/agents/` (the 11 files listed above).
+3. Remove the 11 subagents via **Settings → Subagents** (delete each one), or delete the `~/.zcode/agents/<name>.md` files that ZCode wrote when you created them.
 4. Restart ZCode.
 
 ZCode returns to its default behavior.
