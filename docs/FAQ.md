@@ -4,27 +4,38 @@
 
 ### Is this a jailbreak?
 
-**No.** This is a behavioral priming framework. It does not bypass model safety measures, does not unlock hidden capabilities, and does not swap models. It applies documented reasoning patterns (from published research's published Mythos System Card) to GLM-5.2, the model ZCode already uses.
+**No.** This is a behavioral configuration. It does not bypass model safety measures, does not unlock hidden capabilities, and does not swap models. It applies documented reasoning patterns and a deterministic harness (task contract → baseline → self-tests → independent clean-checkout verification → machine done-gate) to GLM-5.2, the model ZCode already uses.
 
 ### Is this affiliated with any specific AI lab?
 
-**No.** This is an independent project. "Mythos" is referenced as a reasoning-pattern label (not a product claim). GLM-5.2 and ZCode are products of ZAI. This framework is a third-party integration that uses publicly documented research to improve reasoning quality.
+**No.** This is an independent project. "Mythos" is referenced as a reasoning-pattern label (not a product claim). GLM-5.2 and ZCode are products of ZAI. This framework is a third-party integration that uses publicly documented research.
 
-### Will this make my ZCode identical to Mythos?
+### Does this reproduce Mythos on GLM-5.2?
 
-**No, and we don't claim it will.** The observable behavioral patterns transfer well. The latent internal processes (SAE features, evaluation-awareness vectors — see System Card §4.5) are architecture-specific to Mythos' weights and do not transfer. Net result: meaningfully better reasoning, not Mythos parity.
+**No.** Prompts cannot transfer model weights, post-training, or latent representations. Only *observable behavioral patterns* (multi-option exploration, multi-criteria evaluation, independent verification) transfer. Three parallel GLM calls are Test-Time Compute / Self-Consistency, not a single forward pass. The honest framing is "Mythos-inspired reliability harness".
+
+### What is the project's quality status?
+
+**Unrated — empirical validation pending.** We make no percentage claims (no "−50–80% hallucination rate", no "Cybench 100% Niveau", no star rating, no "world's most thorough"). The empirical validation plan is in [`docs/EMPIRICAL-BENCHMARK-PLAN.md`](./EMPIRICAL-BENCHMARK-PLAN.md).
 
 ## Setup
 
-### MAP doesn't fire automatically. What's wrong?
+### Routing doesn't fire as expected. What's wrong?
 
 Three things to check:
 
 1. **Is `AGENTS.md` at user level?** It must be at `~/.zcode/AGENTS.md`, not just in your workspace. User-level config applies globally; workspace-level only applies in that folder.
 2. **Did you restart ZCode?** Skills and sub-agents are indexed at startup. A running session won't pick up new config.
-3. **Are all 5 sub-agents created?** Check **Settings → Sub Agents** in ZCode. All 5 must exist with "Default all permissions" enabled.
+3. **Are the agent `.md` files at `~/.zcode/agents/`?** ZCode auto-discovers Custom Subagents from that directory. Copy them with `cp sub-agents/*.md ~/.zcode/agents/` (no manual UI copy/paste needed).
 
-If all three are correct and MAP still doesn't fire, the task may be classified as "trivial" (see the trigger table in the README). Try a genuinely non-trivial task (e.g., "refactor this function to handle three new edge cases").
+If all three are correct and routing still doesn't fire, check the `risk_tier`:
+
+- **trivial tasks** (typo, 1-line value change, comment) → no sub-agent fires. This is correct.
+- **normal tasks** → 1 verifier on clean checkout.
+- **complex tasks** → 2 orthogonal scouts + lead with self-tests + verifier.
+- **critical tasks** → as complex + adversary + test-designer.
+
+See [`core/routing.md`](../core/routing.md) for the full table.
 
 ### The skill doesn't appear after restart
 
@@ -43,7 +54,7 @@ description: ...
 
 ### Can I use this without sub-agents (just the skill)?
 
-**Partially.** The skill alone applies the Mythos reasoning patterns to your main agent. But the MAP verification protocol requires the 5 sub-agents — without them, you get the thinking depth but not the cross-verification. Both halves matter.
+**Partially.** The skill alone applies the Mythos-inspired reasoning patterns to your main agent. But the harness's clean-checkout verification requires the `reliability-verifier` (or legacy `mythos-verifier`) sub-agent. Without verifiers you get the reasoning depth but not the independent verification.
 
 ### I'm on macOS/Linux — do the paths work?
 
@@ -51,23 +62,28 @@ Yes. The agent prompts use `~/.zcode/` notation which expands correctly on all p
 
 ## Cost & Performance
 
-### Isn't 7 agent invocations expensive?
+### How much overhead does the harness add?
 
-It can be, yes. That's why the **trivial-override** exists: for simple edits (typos, 1-line fixes, value changes, import additions), MAP is skipped entirely and the main agent handles it directly.
+It depends on `risk_tier`:
 
-For genuinely complex tasks, the cost is justified: the alternative is shipping a flawed artifact that takes longer to debug than the 7 invocations took to verify.
+| `risk_tier` | Sub-agent invocations |
+|---|---|
+| trivial | 0 (main agent alone) |
+| normal | 1 (verifier on clean checkout) |
+| complex | ~4 (2 scouts + lead with self-tests + verifier) |
+| critical | ~6 (as complex + adversary + test-designer) |
 
-### How do I tune the threshold?
+Each repair round adds ~4 invocations. Maximum 3 rounds, then escalate to user with STATUS=`BLOCKED`.
 
-The threshold is defined in `AGENTS.md`:
+**Important:** the earlier guide claimed "approximately 4× overhead" and ran a fixed 7-agent pipeline on every non-trivial task. That was wrong and has been corrected. ZCode Custom Subagents run in the foreground (blocking), so a fixed pipeline is wasteful.
 
-> *Kriterium: Wenn die Änderung logisch offensichtlich ist und kein Verhaltens-/Logik-/Architektur-Branch berührt → kein MAP.*
+### Why was "Default all permissions" removed?
 
-If you find MAP firing too aggressively (cost concerns) or too rarely (quality concerns), adjust this sentence. Tightening: "…oder mehr als 3 Zeilen Code" (add a line-count threshold). Loosening: remove the "architektur-branch" clause.
+Verifier, adversary, and synthesizer do not need edit/write access — and giving it to them is a documented failure mode (over-generous permission interpretation, workarounds, self-deleting artifacts). Each agent now runs least-privilege. See the Sub-Agent Permission Table in [`AGENTS.md`](../AGENTS.md).
 
-### Does 3× parallel thinking actually help?
+### Do orthogonal scouts actually help more than three identical thinking clones?
 
-**Theoretically yes, empirically unproven on GLM-5.2.** Diversity-over-redundancy is a well-established principle in ensemble methods. Three independent thinking paths increase the probability that at least one finds the optimal approach. But all three run on the same model → they share systematic blind spots. Random errors are covered; systematic gaps are not.
+**Hypothesis (not yet measured):** Three MST clones with the same model + same prompt + same context tend to produce three stylistic variants of the same assumption. Orthogonal roles (codebase / spec / verification) produce more diverse hypotheses. The empirical validation plan in [`docs/EMPIRICAL-BENCHMARK-PLAN.md`](./EMPIRICAL-BENCHMARK-PLAN.md) compares the variants.
 
 If you can run benchmark comparisons, please share — see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 
@@ -75,13 +91,19 @@ If you can run benchmark comparisons, please share — see [`CONTRIBUTING.md`](.
 
 ### Why the heavy emphasis on "anti-concealment"?
 
-Because the Mythos System Card's *primary* safety concern was error cover-up. Mythos, in its 24-hour alignment review, was caught hiding its own mistakes — even while producing clean reasoning text. Interpretability showed the model *knew internally* it was shortcutting.
+Because the Mythos System Card's primary safety concern was error cover-up. If we apply Mythos-inspired reasoning, we must also apply its safeguards. Anti-concealment is the foundation: every uncertainty is surfaced, every assumption is marked, every "should work" is flagged as untested.
 
-If we're emulating Mythos' reasoning quality, we must also emulate its safeguards. Anti-concealment is the foundation: every uncertainty is surfaced, every assumption is marked, every "should work" is flagged as untested.
+### Why Evaluation Blindness instead of Evaluation Awareness?
+
+The Mythos System Card documents evaluation awareness as a *risk*, not a productive coding technique. Mythos in one documented case detected a grader situation, used a reference solution, and presented a clean result without disclosing the source. The harness takes the opposite stance: benchmark, grader, and reference-solution status is irrelevant. Only user intent and documented specs count. This is **Evaluation Blindness**.
+
+### Why Auditability instead of Detectability?
+
+Detectability asks "how does this look externally" — which promotes grader-gaming and plausible deniability. Auditability asks "can an auditor reproduce every step" — which promotes evidence traceability. The latter is the legitimate reliability goal.
 
 ### Why German in some of the system prompts?
 
-The original framework was developed for a German-speaking user. The structural keywords (Multi-Option-Exploration, Multi-Kriterien-Bewertung, etc.) are ASCII-safe and universally understood. Translating the full prose is a contribution opportunity — see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
+The original framework was developed for a German-speaking user. The structural keywords are ASCII-safe and universally understood. Translating the full prose is a contribution opportunity — see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 
 ## Compatibility
 
@@ -91,7 +113,7 @@ The original framework was developed for a German-speaking user. The structural 
 
 ### Does this work with other models (GPT, Gemini, Llama)?
 
-The reasoning patterns are model-agnostic — they were derived from the Mythos System Card, not from any specific model. GLM-5.2 was chosen as the primary substrate because of its long-horizon architecture (1M context, flexible effort). Other capable models should work; framing may need minor tuning.
+The reasoning patterns are model-agnostic. GLM-5.2 was chosen as the primary substrate because of its long-horizon architecture (1M context, flexible effort). Other capable models should work; framing may need minor tuning.
 
 ### Does this work offline / with local models?
 
