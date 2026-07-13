@@ -117,6 +117,8 @@ The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If 
 
 ## Step 3: Install Sub-Agents via Filesystem
 
+> **Do I need to create the sub-agents manually?** No. ZCode **auto-discovers** Custom Subagents from `~/.zcode/agents/<name>.md` on startup. Copying the files is the entire install — there is no UI step and no manual agent creation.
+
 **IMPORTANT CORRECTION (vs. earlier versions of this guide):** ZCode **does** load Custom Subagents from the filesystem. Subagents stored at `~/.zcode/agents/<name>.md` are loaded automatically on startup. There is **no need for manual copy/paste of 5 agents through the UI** — that earlier instruction was outdated and has been removed.
 
 ### Action
