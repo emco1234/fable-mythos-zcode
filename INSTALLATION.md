@@ -14,7 +14,7 @@ You will install three things:
 
 1. **`AGENTS.md`** — the system prompt (user-level, applies globally)
 2. **`fable-mythos-modus/SKILL.md`** — the behavioral priming skill
-3. **10 sub-agents** (5 legacy + 5 new orthogonal reliability agents) — installed via filesystem (`~/.zcode/agents/<name>.md`)
+3. **11 sub-agents** (5 legacy + 6 new orthogonal reliability agents) — installed via filesystem (`~/.zcode/agents/<name>.md`)
 
 Time required: ~5 minutes (filesystem-based, idempotent).
 
@@ -33,31 +33,50 @@ The `AGENTS.md` is the central system prompt file that ZCode loads in every sess
 
 ### Action (idempotent via managed-block markers)
 
-The body of `AGENTS.md` is wrapped between managed-block markers so re-installation never duplicates content:
+The **entire body** of this repo's `AGENTS.md` is wrapped between managed-block markers (`<!-- reliability-harness:start -->` … `<!-- reliability-harness:end -->`). The installer merges ONLY that block into your `~/.zcode/AGENTS.md`, preserving any personal instructions you keep outside the markers. Re-running it never duplicates content.
 
 ```bash
-# All platforms (Git Bash / macOS / Linux)
+# All platforms (Git Bash / macOS / Linux). Requires awk (preinstalled on macOS/Linux; ships with Git Bash on Windows).
 mkdir -p ~/.zcode
 
-# If an AGENTS.md already exists, back it up first.
-[ -f ~/.zcode/AGENTS.md ] && cp ~/.zcode/AGENTS.md ~/.zcode/AGENTS.md.backup
+SRC=AGENTS.md            # this repo's file
+DST=~/.zcode/AGENTS.md   # your user-level ZCode system prompt
 
-# Idempotent install: replace only the managed block (between the markers),
-# preserving any user instructions outside the markers.
-cp AGENTS.md ~/.zcode/AGENTS.md
+# Back up an existing file the first time.
+[ -f "$DST" ] && [ ! -f "$DST.backup" ] && cp "$DST" "$DST.backup"
+
+# Idempotent marker-aware merge: replace only the managed block in $DST
+# (creates $DST with the block if it does not exist yet).
+awk -v src="$SRC" '
+  BEGIN { while ((getline line < src) > 0) srcLines[++n] = line; inSrcBlock=0; started=0; sawSrcStart=0 }
+  /^<!-- reliability-harness:start -->$/ {
+    started=1; print; inSrcBlock=1
+    for (i=1; i<=n; i++) {
+      if (srcLines[i] ~ /^<!-- reliability-harness:start -->$/) { sawSrcStart=1; continue }
+      if (srcLines[i] ~ /^<!-- reliability-harness:end -->$/)   { break }
+      if (sawSrcStart) print srcLines[i]
+    }
+    next
+  }
+  /^<!-- reliability-harness:end -->$/ { if (started) { print; inSrcBlock=0; next } }
+  { if (!inSrcBlock) print }
+' "$DST" 2>/dev/null > "$DST.tmp" || true
+
+# If DST did not exist yet, the awk above produced nothing — seed it with the block.
+if [ ! -s "$DST.tmp" ]; then cp "$SRC" "$DST.tmp"; fi
+mv "$DST.tmp" "$DST"
+echo "Merged managed block into $DST."
 ```
 
 **Windows explicit path:** `C:\Users\<YOUR_USER>\.zcode\AGENTS.md`
 
-The managed block is delimited by:
+**Why not plain `cp`?** A bare `cp AGENTS.md ~/.zcode/AGENTS.md` overwrites the whole file and destroys any personal instructions you keep there. The marker-aware merge above only touches the harness block.
 
-```
-<!-- reliability-harness:start -->
-...
-<!-- reliability-harness:end -->
-```
+**Verify the markers are present and well-formed** after install:
 
-Re-running the installer replaces only the content between the markers. User instructions outside the markers are preserved.
+```bash
+grep -c "reliability-harness:\(start\|end\)" ~/.zcode/AGENTS.md   # expect: 2
+```
 
 ---
 
@@ -106,14 +125,14 @@ The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If 
 # Create the agents directory (ZCode auto-discovers .md files here)
 mkdir -p ~/.zcode/agents
 
-# Install all 10 sub-agents (5 legacy + 5 new orthogonal reliability agents)
+# Install all 11 sub-agents (5 legacy + 6 new orthogonal reliability agents)
 cp sub-agents/*.md ~/.zcode/agents/
 
 # Verify
 ls ~/.zcode/agents/
 ```
 
-### The 10 sub-agents
+### The 11 sub-agents
 
 Legacy (kept for backward compatibility):
 
@@ -226,7 +245,7 @@ To remove the framework:
 
 1. Delete `~/.zcode/AGENTS.md` (or restore your backup).
 2. Delete `~/.zcode/skills/fable-mythos-modus/`.
-3. Delete the agent files you copied to `~/.zcode/agents/` (the 10 files listed above).
+3. Delete the agent files you copied to `~/.zcode/agents/` (the 11 files listed above).
 4. Restart ZCode.
 
 ZCode returns to its default behavior.

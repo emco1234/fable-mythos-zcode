@@ -90,8 +90,8 @@ The earlier "Detectability Risk" criterion has been **removed**. It is replaced 
 |---|---|---|
 | **trivial** | Main agent alone | 0 |
 | **normal** | Main agent + 1 verifier on clean checkout | 1 |
-| **complex** | 2 orthogonal read-only scouts + lead with self-tests + verifier | ~4 |
-| **critical** | As complex + adversary + test-designer | ~6 |
+| **complex** | 3 orthogonal read-only scouts (incl. test-designer) + lead with self-tests + verifier | ~4 |
+| **critical** | As complex + adversary (isolated worktree) | ~6 |
 
 No three identical thinking agents on every normal change. For investigation, prefer ZCode's built-in read-only `explore` subagent (architecture discovery, call-chain mapping, file search, dependency analysis) over a freely-formulating thinking agent.
 
@@ -191,7 +191,7 @@ fable-mythos-zcode/
 ├── LICENSE                            ← MIT
 ├── fable-mythos-modus/
 │   └── SKILL.md                       ← Behavioral priming skill
-├── sub-agents/                        ← 5 legacy + 5 new orthogonal agents
+├── sub-agents/                        ← 5 legacy + 6 new orthogonal agents
 │   ├── 0-mythos-singleshot-thinking-intelligence.md
 │   ├── 1-mythos-executor.md
 │   ├── 2-mythos-verifier.md

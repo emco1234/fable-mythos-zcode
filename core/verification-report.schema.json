@@ -10,7 +10,8 @@
     "evidence",
     "acceptance_results",
     "scope_violations",
-    "residual_unknowns"
+    "residual_unknowns",
+    "worktree"
   ],
   "additionalProperties": false,
   "properties": {
@@ -34,7 +35,8 @@
         "patch_applied": { "type": "string", "minLength": 1, "description": "Patch identifier (e.g., commit SHA, patch file hash)." },
         "fresh_checkout": {
           "type": "boolean",
-          "description": "Must be true. Verification on a dirty/shared worktree is invalid."
+          "const": true,
+          "description": "Must be true. If false or absent the schema rejects the report, so VERIFIED is unreachable without proof of a clean checkout. Verification on a dirty/shared worktree is invalid."
         }
       }
     },

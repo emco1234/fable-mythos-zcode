@@ -21,8 +21,10 @@ The main agent reads the task, the task contract, and the repository state, then
 |---|---|---|---|---|---|
 | **trivial** | none (main agent reads file) | main agent | none | none | 0 |
 | **normal** | built-in `explore` subagent if needed | main agent with self-tests | 1 `reliability-verifier` on clean checkout | none | 1 |
-| **complex** | `reliability-scout` + `reliability-spec-critic` parallel (read-only); optionally built-in `explore` | `reliability-lead` with mandatory self-tests | `reliability-verifier` on clean checkout + `reliability-test-designer` for regression cases | none | ~4 |
-| **critical** | As complex + `reliability-test-designer` early | `reliability-lead` with self-tests | `reliability-verifier` on clean checkout | `reliability-adversary` in isolated worktree | ~6 |
+| **complex** | `reliability-scout` + `reliability-spec-critic` + `reliability-test-designer` parallel (read-only; test-designer in its own worktree); optionally built-in `explore` | `reliability-lead` with mandatory self-tests | `reliability-verifier` on clean checkout | none | ~4 |
+| **critical** | Same as complex | `reliability-lead` with self-tests | `reliability-verifier` on clean checkout | `reliability-adversary` in isolated worktree | ~6 |
+
+> **`reliability-test-designer` placement:** it is a Phase 0 scout (it designs reproduction + regression + edge cases *before* the lead implements, producing fail-before/pass-after evidence in its own worktree). It runs at `complex` and `critical`, parallel to `reliability-scout` and `reliability-spec-critic`. It is **not** a Phase 4 verifier. This matches Rule 1 (the three orthogonal Phase 0 roles are codebase / spec / verification-design) and is consistent with `AGENTS.md` and `README.md`.
 
 ## Rules
 
