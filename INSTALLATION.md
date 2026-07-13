@@ -121,6 +121,16 @@ The folder name (`fable-mythos-modus`) must exactly match the `name:` field. If 
 >
 > **Manually copying `.md` files into `~/.zcode/agents/` is NOT sufficient.** ZCode only indexes a subagent after it has been created through the Settings UI. The `sub-agents/*.md` files in this repo are the **system-prompt source** (the prompt body you paste into the UI), not a drop-in install.
 
+> **Before you start — clear stale files.** If `~/.zcode/agents/` already contains a file named `<name>.md` (e.g. from an earlier install attempt, or files copied from the OpenCode/Grok repos), ZCode will refuse to create that subagent with the error **"agent file '<name>' already exists"**. Run this once to start clean:
+>
+> ```bash
+> # Back up anything currently in ~/.zcode/agents/, then empty it
+> mkdir -p ~/.zcode/agents-preinstall-backup
+> mv ~/.zcode/agents/*.md ~/.zcode/agents-preinstall-backup/ 2>/dev/null
+> ```
+>
+> (If you have unrelated third-party subagents you want to keep, move only the conflicting names instead of `*.md`.) See **Troubleshooting → "Agent file ... already exists"** for details.
+
 ### What you actually do (once per subagent, 11 in total)
 
 For **each** of the 11 subagents listed below:
@@ -943,9 +953,33 @@ For the investigation phase, prefer the **built-in read-only `explore` subagent*
 
 ### Sub-agent doesn't respond
 
-- Did you create the subagent via **Settings → Subagents → New** and click **Save**? (ZCode only indexes subagents that were created through the UI — see Step 3. Dropping an `.md` file into `~/.zcode/agents/` is not sufficient in the current Beta.)
+- Did you create the subagent via **Settings → Subagents → New** and click **Save**? (See Step 3.)
 - Did you fully restart ZCode after saving all 11 subagents? (subagents created in the UI are indexed on the next startup)
 - Is the agent name in the UI field `Name` matching what the orchestrator references (e.g. `reliability-verifier`, `mythos-executor`)?
+
+### "Agent file ... already exists" when creating a subagent in the UI
+
+This error means **a file at `~/.zcode/agents/<name>.md` is already reserving that name**, so ZCode refuses to create a second subagent with the same name. Common causes:
+
+- A previous install attempt left documentation-snippet files (no frontmatter) in `~/.zcode/agents/`.
+- You copied agent files from another harness (OpenCode/Grok) into `~/.zcode/agents/` — those use a different frontmatter schema and will not load as valid ZCode subagents, but they still reserve the name.
+
+**Fix — free the name, then create in the UI:**
+
+```bash
+# 1. Check what's there
+ls ~/.zcode/agents/
+
+# 2. Back up and remove the conflicting file(s) — replace <name> with the exact name from the error
+mkdir -p ~/.zcode/agents-conflict-backup
+mv ~/.zcode/agents/<name>.md ~/.zcode/agents-conflict-backup/
+
+# 3. Restart ZCode, then create the subagent fresh via Settings → Subagents → New
+```
+
+To check whether a file is a **valid** ZCode agent or a stale snippet, look at the first line: valid files start with `---` (YAML frontmatter). Files starting with `# Sub-Agent ...` are documentation snippets and should be removed from `~/.zcode/agents/`.
+
+> **Do not** drop the `agents/*.md` files from this repo (or the OpenCode/Grok repos) directly into `~/.zcode/agents/`. They use platform-specific frontmatter (`permission:` object for OpenCode, `permission_mode:` for Grok) that ZCode does not understand, and they will block the matching names. Create the 11 subagents via the UI as described in Step 3.
 
 ### Routing doesn't fire as expected
 
