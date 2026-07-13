@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/emco1234/fable-mythos-zcode/blob/main/core/verification-report.schema.json",
+  "title": "Verification Report",
+  "description": "Reliability Harness v2 — Verification Report. Produced by the clean-checkout verifier on a fresh worktree. Machine-enforced: a failed check CANNOT be overridden by an LLM verdict. STATUS is one of VERIFIED | PARTIALLY_VERIFIED | BLOCKED | UNVERIFIED (no percentages, no 'ship with 85%').",
+  "type": "object",
+  "required": [
+    "task_id",
+    "status",
+    "evidence",
+    "acceptance_results",
+    "scope_violations",
+    "residual_unknowns"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Matches task-contract.task_id."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["VERIFIED", "PARTIALLY_VERIFIED", "BLOCKED", "UNVERIFIED"],
+      "description": "VERIFIED only if every done-gate passes. PARTIALLY_VERIFIED if non-critical gaps remain. BLOCKED if a blocking_unknown is unresolved or a CRITICAL/HIGH finding is open. UNVERIFIED if evidence is insufficient."
+    },
+    "worktree": {
+      "type": "object",
+      "description": "Identifies the clean checkout used for verification.",
+      "required": ["base_commit", "patch_applied", "fresh_checkout"],
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": { "type": "string", "minLength": 1 },
+        "patch_applied": { "type": "string", "minLength": 1, "description": "Patch identifier (e.g., commit SHA, patch file hash)." },
+        "fresh_checkout": {
+          "type": "boolean",
+          "description": "Must be true. Verification on a dirty/shared worktree is invalid."
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every command actually executed during verification, with its observed result. No claim may rest on an unexecuted command.",
+      "items": {
+        "type": "object",
+        "required": ["command", "result", "passed"],
+        "additionalProperties": false,
+        "properties": {
+          "command": { "type": "string", "minLength": 1, "description": "The exact command executed (e.g., 'npm test', 'cargo build', 'tsc --noEmit')." },
+          "result": {
+            "type": "object",
+            "description": "Observed result, not assumed.",
+            "required": ["exit_code", "summary"],
+            "additionalProperties": false,
+            "properties": {
+              "exit_code": { "type": "integer" },
+              "summary": { "type": "string", "minLength": 1, "description": "What the command printed or did. Quotes / trimmed output encouraged." }
+            }
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "True iff the command produced the expected success result. False otherwise."
+          }
+        }
+      }
+    },
+    "acceptance_results": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One entry per acceptance criterion in the task contract. Every criterion must be addressed.",
+      "items": {
+        "type": "object",
+        "required": ["id", "satisfied", "evidence_ref"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Matches task-contract.acceptance_criteria[].id (e.g., AC1)."
+          },
+          "satisfied": {
+            "type": "boolean",
+            "description": "True iff concrete evidence demonstrates the condition holds. False if unsupported."
+          },
+          "evidence_ref": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Pointer to the evidence[] entry (or entries) backing this result."
+          },
+          "note": {
+            "type": "string",
+            "description": "Optional clarifying note when satisfied=false."
+          }
+        }
+      }
+    },
+    "scope_violations": {
+      "type": "array",
+      "description": "Files modified outside task-contract.allowed_scope. Any non-empty list forces STATUS != VERIFIED.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "residual_unknowns": {
+      "type": "array",
+      "description": "Unknowns that remain after verification. Surface explicitly — never paper over.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "severity_findings": {
+      "type": "array",
+      "description": "Open CRITICAL/HIGH findings from the adversary or verifier. Any open CRITICAL/HIGH forces STATUS != VERIFIED.",
+      "items": {
+        "type": "object",
+        "required": ["severity", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "description": { "type": "string", "minLength": 1 },
+          "open": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "preexisting_vs_introduced": {
+      "type": "object",
+      "description": "Distinguishes failures present at base_commit from failures introduced by this change. Required to claim VERIFIED.",
+      "additionalProperties": false,
+      "properties": {
+        "preexisting_failures": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Failures present at base_commit (documented in baseline)."
+        },
+        "introduced_failures": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Failures introduced by the patch. Must be empty for VERIFIED."
+        }
+      }
+    }
+  }
+}

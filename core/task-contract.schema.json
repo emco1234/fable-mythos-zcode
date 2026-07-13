@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/emco1234/fable-mythos-zcode/blob/main/core/task-contract.schema.json",
+  "title": "Task Contract",
+  "description": "Reliability Harness v2 — Task Contract. Created before any non-trivial change. Captures goal, hard requirements, non-goals, acceptance criteria, allowed scope, preserved invariants, blocking unknowns, and risk tier. Lives in the persistent evidence ledger so context compaction cannot drop it.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "base_commit",
+    "goal",
+    "must",
+    "must_not",
+    "non_goals",
+    "acceptance_criteria",
+    "allowed_scope",
+    "preserved_invariants",
+    "blocking_unknowns",
+    "risk_tier"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable unique identifier for the task (e.g., a UUID or slug). Referenced by the verification report."
+    },
+    "base_commit": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Git commit SHA at task start. The clean-checkout verifier creates a fresh worktree from this commit and applies the frozen patch."
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Short user-intent statement of what the task accomplishes. One or two sentences."
+    },
+    "must": {
+      "type": "array",
+      "description": "Hard requirements the task MUST satisfy. Each MUST be mapped to an acceptance criterion and backed by evidence at completion.",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "must_not": {
+      "type": "array",
+      "description": "Behaviors or outcomes the task MUST NOT introduce (regressions, scope creep, dependency upgrades as side effects, etc.).",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "non_goals": {
+      "type": "array",
+      "description": "Explicitly out-of-scope items. Calling them out prevents silent scope creep.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Machine-verifiable or auditor-verifiable conditions. Each MUST item maps to at least one acceptance criterion.",
+      "items": {
+        "type": "object",
+        "required": ["id", "condition"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable ID (e.g., AC1, AC2). Referenced by verification-report.acceptance_results[]."
+          },
+          "condition": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Concrete, falsifiable condition. Prefer a command + expected result over prose."
+          }
+        }
+      }
+    },
+    "allowed_scope": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Files / directories the task is permitted to modify. The clean-checkout verifier audits the diff against this list.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "preserved_invariants": {
+      "type": "array",
+      "description": "Properties that MUST still hold after the change (e.g., 'API remains backward-compatible', 'no new dependencies', 'public exports unchanged').",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "blocking_unknowns": {
+      "type": "array",
+      "description": "Open questions that, if unresolved, force STATUS=BLOCKED. Surfaced explicitly so the agent cannot silently paper over them.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "risk_tier": {
+      "type": "string",
+      "enum": ["trivial", "normal", "complex", "critical"],
+      "description": "Drives dynamic routing. trivial=main agent alone; normal=+verifier; complex=2 scouts+lead+verifier; critical=+adversary+test-designer."
+    }
+  }
+}
