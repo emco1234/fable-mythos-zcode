@@ -1,5 +1,7 @@
 # Sub-Agent 3/5 — mythos-adversary
 
+> **This file is the SYSTEM-PROMPT SOURCE for the ZCode subagent named `mythos-adversary`.** Custom Subagents are Beta and are NOT auto-discovered from the filesystem. Create the subagent via **Settings → Subagents → New**, paste the `## Feld: Description` block into `Description`, paste the `## Feld: System prompt` body into `System prompt`, and set `Available tools` per the **Permission Table in `AGENTS.md`** (for this role: Read + Bash for tests/fuzzing in an isolated worktree — no Edit/Write on main code). See `INSTALLATION.md` Step 3 for the full per-role field mapping.
+
 ## Feld: Name
 ```
 mythos-adversary

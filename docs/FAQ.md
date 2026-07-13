@@ -26,7 +26,7 @@ Three things to check:
 
 1. **Is `AGENTS.md` at user level?** It must be at `~/.zcode/AGENTS.md`, not just in your workspace. User-level config applies globally; workspace-level only applies in that folder.
 2. **Did you restart ZCode?** Skills and sub-agents are indexed at startup. A running session won't pick up new config.
-3. **Are the agent `.md` files at `~/.zcode/agents/`?** ZCode auto-discovers Custom Subagents from that directory. Copy them with `cp sub-agents/*.md ~/.zcode/agents/` (no manual UI copy/paste needed).
+3. **Did you create the 11 subagents via the ZCode UI?** Custom Subagents are a Beta feature and must be created from **Settings → Subagents → New**. ZCode only indexes subagents that were created through the UI — copying `sub-agents/*.md` into `~/.zcode/agents/` is **not** sufficient (despite earlier versions of this guide saying otherwise). See [`INSTALLATION.md`](../INSTALLATION.md) Step 3 for the per-role field values.
 
 If all three are correct and routing still doesn't fire, check the `risk_tier`:
 

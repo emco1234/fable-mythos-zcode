@@ -163,18 +163,15 @@ mkdir -p ~/.zcode/skills/fable-mythos-modus
 cp fable-mythos-modus/SKILL.md ~/.zcode/skills/fable-mythos-modus/SKILL.md
 ```
 
-### Step 3 — Install sub-agents via filesystem
+### Step 3 — Create sub-agents via the ZCode UI (Beta)
 
-ZCode auto-discovers Custom Subagents at `~/.zcode/agents/<name>.md`. No manual UI copy/paste needed:
+Custom Subagents are a **Beta** feature. You **must** create each of the 11 subagents via **Settings → Subagents → New** in the ZCode TUI. ZCode writes the subagent to `~/.zcode/agents/<name>.md` when you save; it only indexes subagents created through the UI, so **manually copying `.md` files is not sufficient.**
 
-```bash
-mkdir -p ~/.zcode/agents
-cp sub-agents/*.md ~/.zcode/agents/
-```
+For each subagent: open `sub-agents/<name>.md` in this repo, paste the `## Feld: Description` block into the UI `Description`, paste the `## Feld: System prompt` block into `System prompt`, and set `Available tools` per the Permission Table in `AGENTS.md`. Full per-role field values: see [`INSTALLATION.md`](./INSTALLATION.md) Step 3.
 
 ### Step 4 — Restart ZCode
 
-Skills and sub-agents are indexed at startup. After restart, the harness is fully active.
+Skills and sub-agents are indexed at startup. After creating all 11 subagents in the UI and restarting, the harness is fully active.
 
 📖 **Full step-by-step guide:** see [`INSTALLATION.md`](./INSTALLATION.md).
 
@@ -279,8 +276,8 @@ Verifier, adversary, and synthesizer do not need edit/write access — and givin
 
 Three things to check:
 1. Is `AGENTS.md` at `~/.zcode/AGENTS.md` (user-level)?
-2. Are the agent `.md` files at `~/.zcode/agents/`?
-3. Did you restart ZCode after copying?
+2. Did you create all 11 subagents via **Settings → Subagents → New** and click Save? (ZCode only indexes UI-created subagents — copying `.md` files into `~/.zcode/agents/` is not sufficient while the feature is in Beta.)
+3. Did you restart ZCode after creating the subagents?
 
 Full troubleshooting: [`INSTALLATION.md`](./INSTALLATION.md#troubleshooting).
 
