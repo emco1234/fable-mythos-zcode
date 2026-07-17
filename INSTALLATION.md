@@ -5,7 +5,7 @@ Complete walkthrough to install the Reliability Harness v2 (formerly Fable-Mytho
 ## Prerequisites
 
 - **[ZCode](https://zcode.ai)** installed and running
-- **GLM-5.2 (ZAI)** as the configured model (default for ZCode)
+- Any configured host model works (GLM-5.2, MiniMax M3, Inherit, …). Harness is **model-agnostic**.
 - (Windows) **Git Bash** or equivalent Unix-like shell — PowerShell works but path syntax differs
 
 ## Overview
@@ -107,7 +107,7 @@ Expected output:
 ```
 ---
 name: fable-mythos-modus
-description: Reliability-First-Modus für GLM-5.2. Strikte Anwendung von Task Contract, ...
+description: Reliability-First-Modus für das Host-Modell (GLM-5.2, MiniMax M3, u. a.). Strikte Anwendung von Task Contract, ...
 ---
 ```
 
@@ -1017,3 +1017,15 @@ After installation:
 - Read [`core/routing.md`](./core/routing.md) for the dynamic routing rules.
 - Read [`docs/RELIABILITY-ROADMAP.md`](./docs/RELIABILITY-ROADMAP.md) for P2/P3 plans.
 - Read [`docs/EMPIRICAL-BENCHMARK-PLAN.md`](./docs/EMPIRICAL-BENCHMARK-PLAN.md) for the validation plan.
+
+---
+
+## FORCE MAP and tool-call hygiene (after install)
+
+The installed `AGENTS.md` includes:
+
+1. **FORCE MAP Override** — phrases like `feuer den map mode` / `MAP Mode` / `full MAP` force a full autonomous MAP fleet using the **bare** registered agent names (not `0-mythos-…` filenames).
+2. **Tool-Call Hygiene** — raw tool args only (no `</target_id>` leaks), no `task-notification` spam after streaming-recovery failures, wait via filesystem backoff.
+
+If MAP does not fire on a force phrase, re-merge `AGENTS.md` from this repo and restart the CLI/TUI.
+

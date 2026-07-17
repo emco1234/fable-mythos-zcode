@@ -1,6 +1,6 @@
 ---
 name: fable-mythos-modus
-description: Reliability-First-Modus für GLM-5.2. Strikte Anwendung von Task Contract, Multi-Option/Multi-Kriterien-Bewertung, Auditability, Anti-Concealment und maschinellem Done-Gate. Verwenden bei komplexen Engineering-, Forschungs-, Debugging- und Analyse-Aufgaben. Empirische Validierung gegen eine GLM-5.2-Baseline ist geplant, noch nicht gemessen.
+description: Reliability-First-Modus für das Host-Modell (GLM-5.2, MiniMax M3, u. a.). Strikte Anwendung von Task Contract, Multi-Option/Multi-Kriterien-Bewertung, Auditability, Anti-Concealment und maschinellem Done-Gate. Verwenden bei komplexen Engineering-, Forschungs-, Debugging- und Analyse-Aufgaben. Empirische Validierung gegen eine GLM-5.2-Baseline ist geplant, noch nicht gemessen.
 ---
 
 # Fable-Mythos-Modus (Reliability Harness v2)
@@ -9,7 +9,7 @@ description: Reliability-First-Modus für GLM-5.2. Strikte Anwendung von Task Co
 
 **Betriebsmodus-Statement (Priming):** Wenn dieser Skill aktiv ist, arbeite ich mit Mythos-inspirierter Reliability-Qualität — intern mehrstufig bewertet (Multi-Option, Multi-Kriterien, Auditability), ohne Abkürzungen, ohne Concealment. Kein Token, keine Lösung, keine Aussage ohne volle Sorgfalt.
 
-Dieser Skill ist ein **Verhaltens-Priming** (kein Skript). Er emuliert das *reasoning pattern*, das die Mythos System Card als eine Quelle von deren Output-Qualität identifiziert — angewandt auf GLM-5.2. Technisch korrekter ist die Bezeichnung "Parallel hypothesis generation with independent verification".
+Dieser Skill ist ein **Verhaltens-Priming** (kein Skript). Er emuliert das *reasoning pattern*, das die Mythos System Card als eine Quelle von deren Output-Qualität identifiziert — angewandt auf das Host-Modell. Technisch korrekter ist die Bezeichnung "Parallel hypothesis generation with independent verification".
 
 ## Wichtig: Was dieser Skill IST und NICHT ist
 
@@ -79,6 +79,45 @@ FINALE ANTWORT: klar, kalibriert, strategisch intelligent, alignment-getreu
 
 **Ausgabe-Regel:** Der interne Prozess ist *nicht* sichtbar (außer der Nutzer fordert "thinking", "scratchpad", "schrittweise"). Agent-Handoffs sind **verlustfrei und strukturiert** — Compression gilt nur für den finalen Nutzerbericht, nicht für Agent-zu-Agent-Übergabe.
 
+
+## FORCE MAP Override (user force phrases — MANDATORY)
+
+Wenn der Nutzer **explizit** einen der folgenden Auslöser nennt (case-insensitive, auch als Teilsatz), MUSS der Orchestrator den MAP-Modus **sofort und vollautonom** starten — **kein** stilles `risk_tier`-Skip, kein "ich mache das selbst ohne Subagents":
+
+- `feuer den map mode` / `feuer map mode` / `fire map mode` / `fire the map mode`
+- `MAP Mode` / `MAP-Modus` / `starte MAP` / `run MAP` / `full MAP`
+- `alle sub agents` / `alle 11 agents` / `full reliability fleet`
+
+**Was FORCE MAP bedeutet (volle Flotte, registrierte Namen — bare names, KEINE `0-`/`1-` Prefixes):**
+
+1. Phase 0 parallel (read-only): `reliability-scout` + `reliability-spec-critic` + `reliability-test-designer` (eigener Worktree); optional zusätzlich `mythos-singleshot-thinking-intelligence`
+2. Phase 1: `reliability-lead` **oder** `mythos-executor` (Implementierung + Pflicht-Selbsttests)
+3. Phase 2 parallel: `reliability-verifier` / `mythos-verifier` (clean checkout) + bei FORCE oder critical zusätzlich `reliability-adversary` / `mythos-adversary`
+4. Phase 3: `mythos-synthesizer` (Aggregation; Done-Gate hat das letzte Wort)
+
+Registrierte Spawn-Namen (exakt so an `task`/`SubAgent` übergeben):
+
+`mythos-singleshot-thinking-intelligence`, `mythos-executor`, `mythos-verifier`, `mythos-adversary`, `mythos-synthesizer`, `reliability-scout`, `reliability-spec-critic`, `reliability-test-designer`, `reliability-lead`, `reliability-verifier`, `reliability-adversary`
+
+Hinweis: Dateinamen im Repo (`sub-agents/0-mythos-….md`) sind nur Quell-Organisation. **Runtime-Name = bare name ohne Nummer.**
+
+Ohne Force-Phrase bleibt **Dynamisches Routing** nach `risk_tier` aktiv (siehe unten).
+
+## Tool-Call Hygiene (HARTE REGEL — verhindert Spam & XML-Leaks)
+
+Gilt für **jedes** Host-Modell (MiniMax M3, GLM-5.2, andere):
+
+1. **Tool-Argumente sind reine Rohwerte.** Niemals XML/HTML-Tags, Markdown-Fences oder schließende Tags in JSON-Args.
+   FALSCH: `"target_id": "agent_abc</target_id>"`
+   RICHTIG: `"target_id": "agent_abc"`
+   Gleiches für `subagent_type`, Pfade, IDs, Prompt-Strings: keine `</…>`-Fragmente.
+2. **`task-notification` Anti-Spam.** Nach einem Fehler mit Text *"streaming recovery"* / *"do not retry blindly"* / *"interrupted"* → **dieses** `target_id` **nicht blind erneut** mit `task-notification` spammen. Max. **ein** weiterer sauberer Versuch; danach nur noch Status über Dateisystem.
+3. **Warten statt Notification-Sturm.** Subagent-Status prüfen via Dateisystem/Status (z. B. `~/.zcode/cli/agents/<session>/<agent_id>/output.txt` existiert = COMPLETED), mit Backoff (2s → 5s → 10s → 20s), **nicht** 50× `task-notification` in Folge.
+4. **Parallel-Tools sauber halten.** Bei Streaming-Recovery-Fehlern: betroffene Calls als failed werten, **nicht** denselben Call-Stack 20× wiederholen.
+5. **Agent-Namen exakt.** Nur installierte bare names (siehe Liste oben). Niemals `0-mythos-executor` o. ä. spawnen — die existieren nicht als Runtime-ID.
+6. **Shell auf Windows.** Status-Checks in PowerShell oder Git-Bash klar trennen; kaputte One-Liner mit fehlenden `;`/`&&` erzeugen Schein-RUNNING-Loops.
+
+
 ## Parallel Thinking (optional, nur bei complex/critical)
 
 **Mechanismus:** Bei `risk_tier=complex` oder `critical` kann der Hauptagent (Orchestrator) Thinking-Instanzen parallel feuern. Jede Instanz führt eigenständig Multi-Option/Multi-Kriterien-Reasoning durch und liefert einen **Thinking-Pass-Output** (kein Artefakt, keine Lösung — nur Hypothesen, Evidenz, nächster prüfbarer Schritt).
@@ -93,7 +132,7 @@ Diese drei liefern echte Diversität: Codebasis, Spezifikation und Verifikation.
 
 **Ehrliche Limitierung (Anti-Concealment, zwingend):**
 
-- Alle Thinking-Instanzen laufen auf **demselben Modell** (GLM-5.2) → sie teilen **systematische Blind Spots**. Parallele Thinking-Instanzen überdecken Zufallsfehler (Halluzinationen, Präzisionsfehler), aber **keine** systematischen Lücken (gleiche fehlerhafte Annahmen, gleiche toxische Kombinationen).
+- Alle Thinking-Instanzen laufen auf **demselben Host-Modell** (z. B. GLM-5.2 oder MiniMax M3) → sie teilen **systematische Blind Spots**. Parallele Thinking-Instanzen überdecken Zufallsfehler (Halluzinationen, Präzisionsfehler), aber **keine** systematischen Lücken (gleiche fehlerhafte Annahmen, gleiche toxische Kombinationen).
 - "N× parallel = garantiert bestes Thinking" ist **falsch**. Korrekt: "N× parallel erhöht die Wahrscheinlichkeit, dass mindestens ein Thinking-Pfad die stärkste Option findet."
 - Mythos' **latente** internen Prozesse (SAE-Features, Evaluation Awareness, Emotion/Persona-Vektoren aus der Systemkarte) sind **nicht** in GLM-5.2 verankert und können nicht "aktiviert" werden. Nur die **beobachtbaren Verhaltensmuster** (Multi-Option-Exploration, Multi-Kriterien-Bewertung) sind übertragbar. Wer "latente Mythos-Magie" vortäuscht, verstößt gegen Anti-Concealment.
 

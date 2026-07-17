@@ -103,11 +103,11 @@ See [`core/routing.md`](./core/routing.md) for the full rules.
 
 | Agent | Tools | Role |
 |---|---|---|
-| `0-mythos-singleshot-thinking-intelligence` | read/grep/glob | Optional read-only thinking pass |
-| `1-mythos-executor` | read/edit/write/bash | Implementer with mandatory self-tests |
-| `2-mythos-verifier` | read + bash (tests/build/lint only) | Clean-checkout verifier, no edit/write |
-| `3-mythos-adversary` | read + bash (tests/fuzzing, isolated worktree) | Red-team, only at `risk_tier=critical` |
-| `4-mythos-synthesizer` | read/grep/glob (no edit/write/bash) | Aggregator — does NOT have the final word; the machine done-gate does |
+| `mythos-singleshot-thinking-intelligence` | read/grep/glob | Optional read-only thinking pass |
+| `mythos-executor` | read/edit/write/bash | Implementer with mandatory self-tests |
+| `mythos-verifier` | read + bash (tests/build/lint only) | Clean-checkout verifier, no edit/write |
+| `mythos-adversary` | read + bash (tests/fuzzing, isolated worktree) | Red-team, only at `risk_tier=critical` |
+| `mythos-synthesizer` | read/grep/glob (no edit/write/bash) | Aggregator — does NOT have the final word; the machine done-gate does |
 | `reliability-scout` | read/grep/glob | Codebase, call-graph, conventions, existing tests |
 | `reliability-spec-critic` | read/grep/glob | Acceptance contract, ambiguities, scope |
 | `reliability-test-designer` | read + edit (own worktree) + tests | Repro, regression, edge cases, fail-before/pass-after |
@@ -318,3 +318,5 @@ See [`docs/RELIABILITY-ROADMAP.md`](./docs/RELIABILITY-ROADMAP.md).
 ---
 
 *Built on the principle that reliability is not "more internal thinking + more agents + more self-description" but "clear task + real investigation + minimal change + executable evidence + independent verification + fail-closed completion".*
+
+> **Runtime agent names** are bare (`mythos-executor`, …). Numbered `sub-agents/N-….md` filenames are source organization only. User force phrases (`feuer den map mode`, `MAP Mode`, …) force the full MAP fleet — see `AGENTS.md`.
