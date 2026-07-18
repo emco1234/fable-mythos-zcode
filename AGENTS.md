@@ -106,6 +106,8 @@ Registrierte Spawn-Namen (exakt so an `task`/`SubAgent` übergeben):
 Hinweis: Dateinamen im Repo (`sub-agents/0-mythos-….md`) sind nur Quell-Organisation. **Runtime-Name = bare name ohne Nummer.**
 
 Ohne Force-Phrase bleibt **Dynamisches Routing** nach `risk_tier` aktiv (siehe unten).
+**Spawn-Modus:** MAP-Subagents **foreground / bounded** (siehe Anti-Hang). Keine unbefristete Background-Session für ganze MAP-Phasen.
+
 
 ## Tool-Call Hygiene (HARTE REGEL — verhindert Spam & XML-Leaks)
 
@@ -120,6 +122,52 @@ Gilt für **jedes** Host-Modell (MiniMax M3, GLM-5.2, andere):
 4. **Parallel-Tools sauber halten.** Bei Streaming-Recovery-Fehlern: betroffene Calls als failed werten, **nicht** denselben Call-Stack 20× wiederholen.
 5. **Agent-Namen exakt.** Nur installierte bare names (siehe Liste oben). Niemals `0-mythos-executor` o. ä. spawnen — die existieren nicht als Runtime-ID.
 6. **Shell auf Windows.** Status-Checks in PowerShell oder Git-Bash klar trennen; kaputte One-Liner mit fehlenden `;`/`&&` erzeugen Schein-RUNNING-Loops.
+
+
+## Anti-Hang: Goal Mode vs MAP + Background Watchdog (HARTE REGEL)
+
+### Diagnose des bekannten Hängers
+Wenn Goal Mode (Progress N/M, lange "Running in background") mit MAP kombiniert wird, spawnt der Orchestrator oft **eine detached Background-Session pro MAP-Phase/Batch** ohne Wall-Clock-Timeout. Symptome: "Running for 813m", manuelles Stoppen nötig, Todo-Progress bleibt bei z. B. 7/10 hängen, während ein Background-Task "MAP Phase 1c …" ewig läuft.
+
+### Regel 1 — Goal Mode und MAP nicht nesten
+- **Nicht** Goal Mode als äußeren Langzeit-Orchestrator nutzen und **darin** volles MAP (11 Agents / multi-hour Batches) als Background-Session feuern.
+- **Wähle einen Orchestrator pro Lauf:**
+  - **Option A (empfohlen für Coding-Qualität):** MAP über **Foreground-Subagents** (`task` / SubAgent-Tool mit registered bare names). Kein Goal Mode nötig.
+  - **Option B:** Goal Mode **allein** für lange Multi-Step-Todos (Batches, 50 Dateien) — **ohne** MAP-Flotte und **ohne** nested background MAP-Sessions.
+  - **Option C (nur wenn beides gewünscht):** Goal Mode hält die Todo-Liste; MAP läuft **nur als kurze Foreground-Subagents pro Todo-Item** (max. 1 Lead + 1 Verifier), **niemals** als unbefristete Background-Session für "Phase 1c Bodies Batch …".
+- Wenn der User "feuer den map mode" **und** Goal Mode aktiv ist: **MAP hat Vorrang für die aktuelle Unit of Work**; Goal Mode darf nur Checklist-Status updaten, **darf keine** zweite Background-MAP-Session öffnen.
+
+### Regel 2 — MAP = echte Subagents, keine Background-Sessions
+- MAP-Phasen (0/1/2/3) **müssen** als **Subagents** laufen (ZCode Custom Subagents / OpenCode task / Grok spawn_subagent), **nicht** als neue ungebundene Background-CLI-Session, die Stunden ohne Parent-Kontrolle läuft.
+- **Verboten:** `run_in_background=true` / detached background / "open a new session for MAP batch" für MAP-Lead, Verifier, Adversary, Synthesizer, Scout — außer das Tool **erzwingt** Background **und** ein **hartes Timeout ≤ 20 Minuten** ist gesetzt.
+- **Erlaubt:** kurze parallele Subagents (Scout-Welle), die jeweils in Minuten enden und ein Artefakt zurückgeben.
+
+### Regel 3 — Wall-Clock-Timeouts (Watchdog)
+Pro MAP-Subagent / Background-Task gelten **harte Obergrenzen** (wenn das Platform-Tool Timeout-Parameter hat: setzen; sonst Parent pollt und **killt/stoppt** mental als BLOCKED):
+
+| Rolle | Max. Laufzeit (Wall-Clock) |
+|---|---|
+| Scout / Spec-Critic / MST Thinking | **10 min** |
+| Test-Designer | **15 min** |
+| Lead / Executor (eine Batch-Unit) | **20 min** |
+| Verifier / Adversary | **15 min** |
+| Synthesizer | **5 min** |
+| Irgendein Background-Task ohne Ergebnis | **20 min absolut** → stoppen, STATUS `BLOCKED` oder `PARTIALLY_VERIFIED`, User informieren |
+
+Nach Timeout: **kein** stilles Weiterlaufen. Report: was fertig, was offen, nächster kleinster Chunk.
+
+### Regel 4 — Chunking statt 14-Seiten-Dauerlauf
+- Eine Executor-Unit = **max. 3–5 Dateien** oder **eine** klar begrenzte Teilaufgabe — **nicht** "14 Money-Pages Bodies Batch 2a" in einer Background-Session.
+- Nach jedem Chunk: commit-fähiger Stand, Todo abhaken, **dann** nächster Chunk (Foreground oder neuer kurzer Subagent).
+- Lange "Running for Xm" ohne `output.txt` / ohne Tool-Aktivität > 5 min → als hung betrachten, Backoff-Check, nach 20 min abbrechen.
+
+### Regel 5 — Parent wartet intelligent (kein Spam, kein Eternal Wait)
+- Status: Dateisystem (`output.txt`) oder Platform-Status mit Backoff 2s→5s→10s→20s→60s.
+- **Max. Wartefenster gesamt pro Phase: 25 min.** Danach Phase als timed-out markieren.
+- Niemals 50× `task-notification` und niemals "ewig pollend" ohne Kill-Entscheidung.
+
+### Regel 6 — User-Kommunikation bei Hang
+Wenn ein Background-Task > 20 min ohne Completion läuft: User klar sagen, dass der Task als hangend gilt, manuell stoppen kann, und der Harness den Scope in kleinere Chunks zerlegt.
 
 ## Dynamisches Routing
 
